@@ -1,0 +1,20 @@
+model
+{for (i in 1:m){Y1998[i]~dpois(mu[i])
+p.sig[i]<-step(s[i])
+log(mu[i])<-log(Exp98[i])+log(theta[i])
+log(theta[i])<-a0+s[i]}
+OMrho<-1-rho
+for (j in 1:m){
+for(k in 1:m){
+asd[j,k]<-OMrho*Q1[j,k]
+aer[j,k]<-asd[j,k]+RD[j,k]
+adf[j,k]<-prec*aer[j,k]
+}}
+
+s[1:m]~dmnorm(R0[1:m],adf[1:m,1:m])
+
+a0~dnorm(0,tau0)
+tau0~dgamma(2,0.5)
+rho~dunif(0,1)
+prec~dgamma(1,0.5)
+}

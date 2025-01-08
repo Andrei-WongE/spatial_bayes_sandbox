@@ -1,0 +1,20 @@
+tmodel{
+scale<-0.3783966
+for(i in 1: m){
+Y1998[i]~dpois(mu[i])
+log(mu[i])<-log(Exp98[i])+log(theta[i]) 
+theta[i]<-exp(ac0+bym2[i]) 
+vc[i]~dnorm(0,1)
+Corr[i]<-sigma*uc[i]*sqrt(rho/scale)
+UCorr[i]<-sigma*vc[i]*sqrt((1-rho)) 
+bym2[i]<-Corr[i]+UCorr[i]
+}  
+for (k in 1 :sumNumNeigh){wei[k]<-1} 
+uc[1:m]~car.normal(adj[],wei[],num[],1)  
+sigma~dunif(0,5)
+tau<-pow(sigma,-2)
+rho~dbeta(1,1)
+ac0~dnorm(0,tau0)
+tau0<-pow(sd0,-2)
+sd0~dunif(0,5)
+})

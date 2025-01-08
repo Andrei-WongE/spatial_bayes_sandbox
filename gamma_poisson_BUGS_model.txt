@@ -1,0 +1,9 @@
+ model{
+    for(i in 1:m){
+    Y1998[i]~dpois(mu[i])
+    mu[i]<-Exp98[i]*theta[i]
+    theta[i]~dgamma(a,b)
+    }
+    a~dexp(10)
+    b~dexp(10)
+    }

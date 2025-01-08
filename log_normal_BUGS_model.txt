@@ -1,0 +1,11 @@
+ model{
+    for(i in 1:m){
+    Y1998[i]~dpois(mu[i])
+    mu[i]<-Exp98[i]*theta[i]
+    log(theta[i])<-a0+v[i]
+v[i]~dnorm(0,tauv)
+    }
+ a0~dnorm(0,tau0)
+tauv~dgamma(2,0.5)
+tau0~dgamma(2,0.5)   
+    }

@@ -1,0 +1,17 @@
+model{
+    for(i in 1:m){
+    Y1998[i]~dpois(mu[i])
+    mu[i]<-Exp98[i]*theta[i]
+    log(theta[i])<-a0+p[i]*v[i]+(1-p[i])*u[i]
+v[i]~dnorm(0,tauV)
+p[i]~dbeta(1,1)
+    }
+u[1:m]~car.normal(adj[],wei[],num[],tauU)
+for(k in 1:sumNumNeigh) {
+      wei[k] <- 1 }
+
+ a0~dnorm(0,tau0)
+tauV~dgamma(2,0.5)
+tau0~dgamma(2,0.5)
+tauU~dgamma(2,0.5)   
+    }
