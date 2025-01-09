@@ -1,0 +1,73 @@
+library(nimble)
+GPModel<-nimbleCode({
+    for(i in 1:m){
+    Y1998[i]~dpois(mu[i])
+    mu[i]<-Exp98[i]*theta[i]
+    theta[i]~dgamma(a,b)
+    }
+    a~dexp(10)
+    b~dexp(10)
+    })
+GPdata<-list(Y1998=c( 18,90,10,120,12,14,76,96,10,256,37,23,40,29,36,
+55,21,63,15,19,129,47,260,60,10,184,22,45,43,44,10,171,11,
+34,22,34,51,63,90,201,10,202,87,25,25,91))
+GPconsts<-list(m=46,Exp98=c(19.334642001146, 105.221991510865, 8.9954123633133, 126.211287025262, 
+12.9499400671852, 17.0850039703209, 85.5262771111914, 107.178846922884, 
+11.0291918950188, 248.419380066852, 38.5954996425929, 27.0027208298727, 
+32.2453350684913, 24.1871410613557, 29.3284980403873, 52.0933278275436, 
+23.3496100847714, 69.1791167378613, 15.7011547559647, 17.5779462883105, 
+98.0421453601469, 42.1724712080047, 277.747093167242, 49.9402374163248, 
+15.0708479385354, 137.177683720537, 13.3400552455942, 38.1425892644401, 
+46.222761591486, 49.646669857522, 16.011990994697, 161.116783742905, 
+7.49225226944375, 27.1667732892036, 23.2255895652772, 27.0506021696774, 
+50.282471254929, 68.9687528187193, 84.0568694371842, 241.020535657027, 
+13.3636034454982, 194.239681727817, 84.0882670370562, 23.9367452023769, 
+29.1377576211652, 121.126445726))
+GPinits<-list(a=10,b=10,theta=c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+1, 1, 1, 1, 1))
+######################################################################################
+GPmod<-nimbleModel(code=GPModel,name="GPM",constants=GPconsts,data=GPdata,inits=GPinits)
+################ compilation  #####################################################
+CGP<-compileNimble(GPmod)
+
+
+CGPcon<-configureMCMC(CGP,print=TRUE,enableWAIC=TRUE)
+CGPcon$addMonitors(c("a","b","theta"))
+GPMCMC<-buildMCMC(CGPcon)
+CGPMCMC<-compileNimble(GPMCMC)
+
+CGPMCMC$run(10000)
+
+#or
+
+niter=10000
+samples<-runMCMC(CGPMCMC,niter=niter,nburnin=9000,nchains=1,summary=TRUE) 
+
+samples$summary
+theta<-samples$summary[3:48,1]
+#################################################################
+#### graphics   ################################################
+###############################################################
+
+library(sf)
+library(sp)
+library(spdep)
+SCpoly<-st_read("SC_county_alphasort.shp")
+SCmap<-as_Spatial(SCpoly)
+plot(SCmap)
+GPM<-cbind(theta)
+SCcon<-data.frame(GPM)
+#graphics....using data.frame and SCmap
+library(tmap)
+areaID<-as.character(seq(1:46))
+attr<-data.frame(SCcon,row.names=areaID)
+spg<-SpatialPolygonsDataFrame(SCmap, attr, match.ID = TRUE)
+labels<-c("theta")
+
+qtm(spg,fill=c("theta"),fill.palette="Blues")+
+    tm_layout(title="",panel.labels=labels,legend.position=c("LEFT","BOTTOM"),legend.height=0.5)
+
+########################## alternate call ############################
+mcmc.out<-nimbleMCMC(code=GPModel,constants=GPconsts,
+data=GPdata,inits=GPinits,nchains=2,niter=10000,summary=TRUE)
