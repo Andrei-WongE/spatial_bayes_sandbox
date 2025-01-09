@@ -342,6 +342,7 @@ CCONVMCMC<-compileNimble(CONVMCMC)
 
 niter=21000
 samples<-runMCMC(CCONVMCMC,niter=niter,nburnin=20000,nchains=1,summary=TRUE,WAIC=TRUE) 
+
 Dev<-samples$summary[1,1]
 Dev
 DevSD<-samples$summary[1,3]
