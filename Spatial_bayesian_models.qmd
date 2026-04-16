@@ -1,41 +1,133 @@
 ---
 title: "Spatial Bayesian models"
+author: "[Andrei Wong](https://github.com/Andrei-WongE)"
+date: "April 16, 2026"
 format:
   html:
-    theme: cosmo
+    theme: lux
+    html-math-method: mathjax
   pdf:
-    documentclass: article
+    documentclass: article 
+# Add table of contents
+    toc: true
+    toc_float: true
+    toc-depth: 2
+    toc-location: left
+    toc-title: "On this page"
+    number-sections: true
+# By default smooth scroll is not enabled
+    smooth-scroll: true
+    link-external-icon: false
+    link-external-newwindow: true
+    highlight-style: github
+# Fold code (initially hidden)
+    code-fold: true
+    code_download: yes
+    code-link: true
+    code-block-bg: true
+    code-block-border-left: "#ADBBCB"
+    table-captions: true 
+    tbl-cap-location: margin
+    reference-location: margin
+    citation-location: margin
+# Text for footer
+    include-after-body: footer.html
+    
+citation:
+  type: post
+  url: "https://github.com/Andrei-WongE/spatial_bayes_sandbox"
+  
+# Allow for highlighting text. \hl{highlight} text inline.Or \hl{\textbf{highlight}} with bold face.
+# Allows fort commenting using hypothesis
+comments:
+  hypothesis: true 
+
 execute:
-  echo: true
   warning: false
   message: false
+  #freeze: auto  # re-render only when source changes
 ---
 
+# Set-up
+
+```{r}
+#| label: timestamp-setup
+#| echo: false
+
+knitted_when <- format(Sys.Date())
+knitted_where <- knitr::current_input()
+knitted_with <- packageVersion("knitr")
+knitted_doc_url <- downlit::autolink_url("knitr::knit()")
+```
+
+Note updated on `r knitted_when` from `r knitted_where` with knitr version `r knitted_with`.
+
+::: callout-note
+## General set-up of the program.
+
+These notes make use of the following R packages and general set-up.
+
+```{r}
+#| label: set-up
+
+  if (!require("pacman")) {
+  install.packages("pacman")
+  }
+
+  pacman::p_load(tidyverse 
+                 ,tidylog
+                 ,Cairo
+                 ,here
+                 ,dplyr
+                 ,htmltools
+                 ,SpatialEpi # for pennLC data
+                 ,crsuggest  # Suggest CRS information for spatial data
+                 ,ggplot2
+                 ,ggnewscale # For multiple fill and colour scales in ggplot2
+                 ,sf         # DONT'T FORGET uses the s2geometry library
+                 ,leaflet    # JavaScript libraries for interactive maps
+                 ,leafem     # Extensions for leaflet 
+                 ,knitr
+                 ,ragg       # Graphic devices based on the AGG library
+                 ,downlit    # For syntax highlighting and automatic linking
+                 ,git2r      # Provides access to 'Git' repositories
+                 ,xfun       # For alternative Session Info
+                 )
+  
+  #pacman::p_update()         # Update out-of-date packages
+
+  options(scipen = 100, digits = 2)             # Prefer non-scientific notation
+  
+  knitr::opts_chunk$set( dev       = "ragg_png"
+                        ,fig.path  = "Figs/"
+                        ,dpi       = 600
+                        ,fig.width = 10
+                        ,fig.hight = 12
+  # Automatically formatting code using styler
+                        ,tidy      = "styler"
+)
+
+```
+:::
+
 # Spatial Bayesian models
-
-
 
 ## CARBayes Demo
 
 This example is adapted from the following article by [Dr Paula Moraga](https://journal.r-project.org/archive/2018/RJ-2018-036/RJ-2018-036.pdf)
 
-
 ```{r}
-#| label: setup
+#| label: data
 #| include: false
 
-library(dplyr)
-library(tibble)
-library(sf)
-library(leaflet)
-library(htmltools)
-library(CARBayes)
-library(SpatialEpi)  # for pennLC [rdocumentation](https://www.rdocumentation.org/packages/SpatialEpi/versions/1.2.8/topics/pennLC)
+source(here("Install.R")) # Has fillmap.R as dependency
+
+# dependencies ‘Rgraphviz’, ‘graph’ are not available
+
+# library(SpatialEpi)  # for pennLC [rdocumentation](https://www.rdocumentation.org/packages/SpatialEpi/versions/1.2.8/topics/pennLC)
 
 
 ```
-
-
 
 ```{r}
 data(pennLC)

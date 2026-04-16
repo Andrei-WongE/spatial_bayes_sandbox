@@ -3,7 +3,7 @@ install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-dow
 
 # OPENBUGS
 
-install.packages(c("R2OpenBUGS", "CARBayes", "Nimble"))
+install.packages(c("R2OpenBUGS", "CARBayes", "nimble"))
 
 # In addition, it is useful to load the following R packages: akima, DCluster, shapefiles, mba, tmap, sf, sp and spdep. fillmap is available as R code within the participant files:
   
