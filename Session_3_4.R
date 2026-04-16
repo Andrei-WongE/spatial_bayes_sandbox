@@ -4,7 +4,7 @@ require(tmap)
 require(sp)
 # remotes::install_github("carrollrm/fillmap")
 require(fillmap)
-
+require(here)
 
 #R commands: image, persp, contour, interp
 asd<-read.table("surfXYZ.txt")

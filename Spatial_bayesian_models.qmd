@@ -1,0 +1,212 @@
+---
+title: "Spatial Bayesian models"
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: article
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Spatial Bayesian models
+
+
+
+## CARBayes Demo
+
+This example is adapted from the following article by [Dr Paula Moraga](https://journal.r-project.org/archive/2018/RJ-2018-036/RJ-2018-036.pdf)
+
+
+```{r}
+#| label: setup
+#| include: false
+
+library(dplyr)
+library(tibble)
+library(sf)
+library(leaflet)
+library(htmltools)
+library(CARBayes)
+library(SpatialEpi)  # for pennLC [rdocumentation](https://www.rdocumentation.org/packages/SpatialEpi/versions/1.2.8/topics/pennLC)
+
+
+```
+
+
+
+```{r}
+data(pennLC)
+names(pennLC)
+head(pennLC$data)
+head(pennLC$smoking)
+```
+
+```{r}
+# Add observed cases
+pennLC$data <- pennLC$data %>%
+  tibble() %>%
+  group_by(county) %>%
+  mutate(obs = sum(cases)) %>%
+  ungroup()
+
+# Add expected cases
+pennLC$data <- pennLC$data %>%
+  group_by(race, gender, age) %>%
+  mutate(
+    pop.strata   = sum(population),
+    cases.strata = sum(cases)
+  ) %>%
+  group_by(county) %>%
+  mutate(
+    expected = population * cases.strata / pop.strata,
+    expected = sum(expected)
+  ) %>%
+  ungroup()
+
+# Summarise observed and expected; add SIR
+pennLC$data <- pennLC$data %>%
+  select(county, obs, expected) %>%
+  distinct() %>%
+  mutate(SIR = obs / expected) %>%
+  left_join(pennLC$smoking, by = "county")
+```
+
+```{r}
+# Create sf object from SpatialPolygons
+map <- st_as_sf(pennLC$spatial.polygon) %>%
+  st_transform("+proj=longlat +datum=WGS84")
+
+map <- cbind(map, pennLC$data)
+
+pal <- colorNumeric(palette = "YlOrRd", domain = map$SIR)
+```
+
+```{r}
+# Observed SIR map
+leaflet(map) %>%
+  addTiles() %>%
+  addPolygons(
+    color       = "grey",
+    weight      = 1,
+    fillColor   = ~pal(SIR),
+    fillOpacity = 0.7
+  ) %>%
+  addLegend(
+    pal      = pal,
+    values   = ~SIR,
+    opacity  = 0.7,
+    title    = "SIR",
+    position = "bottomright"
+  )
+```
+
+```{r}
+# Labels
+labels <- sprintf(
+  "<strong>%s</strong><br/>Observed: %s <br/>Expected: %s 
+   <br/>Smokers proportion: %s <br/>SIR: %s",
+  map$county,
+  map$obs,
+  round(map$expected, 2),
+  map$smoking,
+  round(map$SIR, 2)
+) %>%
+  lapply(htmltools::HTML)
+
+leaflet(map) %>%
+  addTiles() %>%
+  addPolygons(
+    color           = "grey",
+    weight          = 1,
+    fillColor       = ~pal(SIR),
+    fillOpacity     = 0.7,
+    highlightOptions = highlightOptions(weight = 4),
+    label           = labels,
+    labelOptions    = labelOptions(
+      style    = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto"
+    )
+  ) %>%
+  addLegend(
+    pal      = pal,
+    values   = ~SIR,
+    opacity  = 0.7,
+    title    = "SIR",
+    position = "bottomright"
+  )
+```
+
+```{r}
+# Adjacency matrix
+W <- st_touches(map) %>%
+  as.matrix() * 1
+
+M.burnin <- 10000
+M        <- 5000
+
+set.seed(111)
+MCMC <- S.CARbym(
+  formula  = obs ~ 1 + offset(log(expected)),
+  data     = map,
+  family   = "poisson",
+  W        = W,
+  burnin   = M.burnin,
+  n.sample = M.burnin + M,
+  verbose  = FALSE
+)
+
+print(MCMC$summary.results)
+```
+
+```{r}
+# Posterior SIR and summary
+y.fit <- MCMC$samples$fitted
+SIR   <- t(t(y.fit) / map$expected)
+
+map$SIR.50  <- apply(SIR, 2, median)
+map$SIR.025 <- apply(SIR, 2, quantile, 0.025)
+map$SIR.975 <- apply(SIR, 2, quantile, 0.975)
+map$PP      <- apply(SIR, 2, function(x) length(which(x > 1))) / M
+
+labels <- sprintf(
+  "<strong>%s</strong> <br/>Observed: %s <br/>Expected: %s <br/>
+   Smoker proportion: %s <br/>SIR: %s <br/>RR: %s (%s, %s) <br/>PP: %s",
+  map$county,
+  map$obs,
+  round(map$expected, 2),
+  map$smoking,
+  round(map$SIR, 2),
+  round(map$SIR.50, 2),
+  round(map$SIR.025, 2),
+  round(map$SIR.975, 2),
+  round(map$PP, 3)
+) %>%
+  lapply(htmltools::HTML)
+
+leaflet(map) %>%
+  addTiles() %>%
+  addPolygons(
+    color           = "grey",
+    weight          = 1,
+    fillColor       = ~pal(SIR.50),
+    fillOpacity     = 0.7,
+    highlightOptions = highlightOptions(weight = 4),
+    label           = labels,
+    labelOptions    = labelOptions(
+      style    = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto"
+    )
+  ) %>%
+  addLegend(
+    pal      = pal,
+    values   = ~SIR.50,
+    opacity  = 0.7,
+    title    = "Relative Risk",
+    position = "bottomright"
+  )
+```
