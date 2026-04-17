@@ -1,6 +1,6 @@
 ---
 title: "Spatial Bayesian models"
-author: "[Andrei Wong](https://github.com/Andrei-WongE)"
+author: "[Andrei Wong Espejo](https://github.com/Andrei-WongE)"
 date: "April 16, 2026"
 format:
   html:
@@ -123,6 +123,10 @@ This example is adapted from the following article by [Dr Paula Moraga](https://
 source(here("Install.R")) # Has fillmap.R as dependency
 
 # dependencies ‘Rgraphviz’, ‘graph’ are not available
+library(INLA)
+library(R2OpenBUGS)
+library(CARBayes)
+library(nimble)
 
 # library(SpatialEpi)  # for pennLC [rdocumentation](https://www.rdocumentation.org/packages/SpatialEpi/versions/1.2.8/topics/pennLC)
 
@@ -160,7 +164,7 @@ pennLC$data <- pennLC$data %>%
 
 # Summarise observed and expected; add SIR
 pennLC$data <- pennLC$data %>%
-  select(county, obs, expected) %>%
+  dplyr::select(county, obs, expected) %>%
   distinct() %>%
   mutate(SIR = obs / expected) %>%
   left_join(pennLC$smoking, by = "county")
@@ -232,8 +236,42 @@ leaflet(map) %>%
   )
 ```
 
+We will use the Besag-York-Mollié (BYM) model first introduced in Besag et al. (1991).
+
+The model simply states that nearby things are similar.
+
+$$ Y_i \sim N(\mu_i, \sigma^2) $$
+
+$$ \mu\_i = z_i \beta + u_i + v_i $$
+
+Spatial random effect ($u_i$) accounting for spatial dependence and modelled with an intrinsic conditional autoregressive model (ICAR) that smooths the data according to a specified neighbourhood structure (for example, using `poly2nb()` to create a neighbours list based on contiguous areas).
+
+The term ($v_i$) is an unstructured exchangeable component modelling uncorrelated noise, assumed i.i.d. normal with zero mean and variance $v_i \sim N(0, \sigma_v^2)$:
+
+ICAR specification for the spatial effect:
+
+$$ u_i \mid u\_{-i} \sim N!\left(\bar{u}\_{\delta\_i}, \frac{\sigma_u^2}{n_{\delta_i}}\right) $$
+
+where ($delta_i$) is the set of neighbours of area (i), and ($n_{\delta\_i}$) is the number of neighbours of area (i). The local mean of neighbours is
+
+$$ \bar{u}\_{\delta_i} = \frac{1}{n_{\delta_i}} \sum{j \in \delta\_i} u_j $$
+
+Bayesian hierarchical models can be fitted using a number of approaches such as integrated nested Laplace approximation (INLA) (Rue, Martino, and Chopin 2009) and Markov chain Monte Carlo (MCMC) methods (Gelman et al. 2013).
+
+Critiques to the BYM: - As indicated by Wu & Banerjee (2024), Simpson et al. (2017) and Riebler et al. (2016) the error components are not identifiable and scaling issues complicate interpretation of the variance parameters in the BYM model.
+
+::: {.callout-note appearance="simple"}
+## Pay Attention EXPLAIN BETTER
+:::
+
+Set-up:
+
+The BYM model combines two random effects per area: a spatially structured CAR component and an unstructured i.i.d. component. The formula `obs ~ 1 + offset(log(expected))` models observed counts against expected counts, which is standard disease mapping setup yielding relative risk estimates.
+
+MCMC settings `M.burnin = 10000` discards the first 10,000 iterations as the chain converges. `M = 5000` keeps 5,000 posterior samples, making total iterations: 15,000.
+
 ```{r}
-# Adjacency matrix
+# Adjacency matrix, converting to binary numeric matrix
 W <- st_touches(map) %>%
   as.matrix() * 1
 
@@ -241,6 +279,7 @@ M.burnin <- 10000
 M        <- 5000
 
 set.seed(111)
+
 MCMC <- S.CARbym(
   formula  = obs ~ 1 + offset(log(expected)),
   data     = map,
@@ -301,4 +340,18 @@ leaflet(map) %>%
     title    = "Relative Risk",
     position = "bottomright"
   )
+```
+
+```{r}
+#| label: reproducibility 
+
+		    ## Datetime
+		    Sys.time()
+		
+		    ## Repository
+		    git2r::repository()
+		
+		    ## session info
+		    xfun::session_info()
+
 ```
