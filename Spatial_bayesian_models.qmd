@@ -139,6 +139,7 @@ names(pennLC)
 head(pennLC$data)
 head(pennLC$smoking)
 ```
+We calculate the expected number of cases in each county using indirect standardisation. The expected counts in each county represent the total number of disease cases one would expect if the population in the county behaved the way the Pennsylvania population behaves.
 
 ```{r}
 # Add observed cases
@@ -235,6 +236,13 @@ leaflet(map) %>%
     position = "bottomright"
   )
 ```
+Now we can examine the map and see which areas have
+
+    SIR = 1 which indicates observed cases are the same as expected,
+    SIR > 1 which indicates observed cases are higher than expected,
+    SIR < 1 which indicates observed cases are lower than expected.
+
+This map gives a sense of the disease risk across Pennsylvania. However, observed (raw) SIRs may be misleading and insufficiently reliable in counties with small populations. In contrast, model-based approaches enable the incorporation of covariates and borrow information from neighbouring counties to improve local estimates, resulting in the smoothing of extreme values based on small sample sizes.
 
 We will use the Besag-York-Mollié (BYM) model first introduced in Besag et al. (1991).
 
@@ -250,15 +258,17 @@ The term ($v_i$) is an unstructured exchangeable component modelling uncorrelate
 
 ICAR specification for the spatial effect:
 
-$$ u_i \mid u\_{-i} \sim N!\left(\bar{u}\_{\delta\_i}, \frac{\sigma_u^2}{n_{\delta_i}}\right) $$
+$$ u_i \mid u_{-i} \sim N\left(\bar{u}_{\delta_i}, \frac{\sigma_u^2}{n_{\delta_i}}\right) $$
 
 where ($delta_i$) is the set of neighbours of area (i), and ($n_{\delta\_i}$) is the number of neighbours of area (i). The local mean of neighbours is
 
-$$ \bar{u}\_{\delta_i} = \frac{1}{n_{\delta_i}} \sum{j \in \delta\_i} u_j $$
+$$ \bar{u}_{\delta_i} = \frac{1}{n_{\delta_i}} \sum_{j \in \delta_i} u_j $$
 
 Bayesian hierarchical models can be fitted using a number of approaches such as integrated nested Laplace approximation (INLA) (Rue, Martino, and Chopin 2009) and Markov chain Monte Carlo (MCMC) methods (Gelman et al. 2013).
 
-Critiques to the BYM: - As indicated by Wu & Banerjee (2024), Simpson et al. (2017) and Riebler et al. (2016) the error components are not identifiable and scaling issues complicate interpretation of the variance parameters in the BYM model.
+Critiques to the BYM: 
+
+- As indicated by Wu & Banerjee (2024), Simpson et al. (2017) and Riebler et al. (2016) the error components are not identifiable and scaling issues complicate interpretation of the variance parameters in the BYM model.
 
 ::: {.callout-note appearance="simple"}
 ## Pay Attention EXPLAIN BETTER
@@ -292,6 +302,9 @@ MCMC <- S.CARbym(
 
 print(MCMC$summary.results)
 ```
+To obtain the modelled SIR, we need to divide the fitted values by the expected values.
+
+We use `RR` to denote relative risk, which is the smoothed SIR (specifically, the median of the smoothed SIR), to distinguish it from the observed SIR. The posterior probability of the relative risk being greater than 1 (i.e. the proportion of MCMC iterations where the smoothed SIR is greater than 1) is also included, denoted by `PP` in the map area labels.
 
 ```{r}
 # Posterior SIR and summary
