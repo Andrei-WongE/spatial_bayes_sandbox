@@ -7,6 +7,9 @@ format:
     theme: lux
     html-math-method: mathjax
     embed-resources: true
+    toc: true
+    toc-location: left
+    smooth-scroll: true
   pdf:
     documentclass: article 
 # Add table of contents
@@ -46,8 +49,14 @@ comments:
 execute:
   warning: false
   message: false
-  #freeze: auto  # re-render only when source changes
+  freeze: auto  # re-render only when source changes
 ---
+
+::: callout-warning
+NO PDF: chromote–Chrome compatibility issue that appeared with newer Chrome builds (very similar errors were reported around Chrome v128+, breaking chrome_print() / chromote on multiple systems).
+
+Brute force `quarto render Spatial_bayesian_models.qmd --to html`
+:::
 
 # Set-up
 
@@ -113,6 +122,18 @@ These notes make use of the following R packages and general set-up.
 
 # Spatial Bayesian models
 
+## Basic concepts
+
+-   Spatial autocorrelation: SA as data redundancy, SA as missing spatial variables, and SA as map pattern are different ways of viewing SA, and all mutually implicate one another (Griffith, 1992).
+-   Spatial heterogeneity:
+-   Spatial confounding: Following Hodges and Reich (2010), refers to the difference in estimates provided by spatial and nonspatial models, refers to correlation between covariates and the spatial trend, which can influence the estimate of coefficients. Critiqued by Donegan (2024) .
+-   Hierarchical modelling:
+-   Exchangeability in the spatial context:
+-   Prior distributions are probability distributions on model parameters that specify beliefs about the relative plausibility of parameter values before seeing the data (Wagenmakers et al., 2018). These prior beliefs can then be updated with the data to obtain the posterior beliefs about the model parameters, following Bayes’ rule (Jeffreys, 1961).
+-   Jeffreys–Lindley paradox: any effect is unlikely under the prior, as a wide range of effects is deemed plausible. This influences model comparisons: the support for the null hypothesis becomes increasingly large.
+-   A prior is proper if two conditions hold: (1) All values of the probability distribution are equal to or greater than zero, and (2) the probability distribution sums to 1 for discrete data or integrates to 1 for continuous data (Veenman et al., 2023).
+-   Conjugate priors result in posterior distributions that belong to the same distribution family as the prior distribution (Fink, 1997a)
+
 ## CARBayes Demo
 
 This example is adapted from the following article by [Dr Paula Moraga](https://journal.r-project.org/archive/2018/RJ-2018-036/RJ-2018-036.pdf)
@@ -140,6 +161,7 @@ names(pennLC)
 head(pennLC$data)
 head(pennLC$smoking)
 ```
+
 We calculate the expected number of cases in each county using indirect standardisation. The expected counts in each county represent the total number of disease cases one would expect if the population in the county behaved the way the Pennsylvania population behaves.
 
 ```{r}
@@ -237,21 +259,24 @@ leaflet(map) %>%
     position = "bottomright"
   )
 ```
+
 Now we can examine the map and see which areas have
 
-    SIR = 1 which indicates observed cases are the same as expected,
-    SIR > 1 which indicates observed cases are higher than expected,
-    SIR < 1 which indicates observed cases are lower than expected.
+```         
+SIR = 1 which indicates observed cases are the same as expected,
+SIR > 1 which indicates observed cases are higher than expected,
+SIR < 1 which indicates observed cases are lower than expected.
+```
 
 This map gives a sense of the disease risk across Pennsylvania. However, observed (raw) SIRs may be misleading and insufficiently reliable in counties with small populations. In contrast, model-based approaches enable the incorporation of covariates and borrow information from neighbouring counties to improve local estimates, resulting in the smoothing of extreme values based on small sample sizes.
 
-We will use the Besag-York-Mollié (BYM) model first introduced in Besag et al. (1991).
+We will use the Besag-York-Mollié (BYM) spatial convolution model first introduced in Besag et al. (1991).
 
 The model simply states that nearby things are similar.
 
 $$ Y_i \sim N(\mu_i, \sigma^2) $$
 
-$$ \mu\_i = z_i \beta + u_i + v_i $$
+$$ \mu_i = z_i \beta + u_i + v_i $$
 
 Spatial random effect ($u_i$) accounting for spatial dependence and modelled with an intrinsic conditional autoregressive model (ICAR) that smooths the data according to a specified neighbourhood structure (for example, using `poly2nb()` to create a neighbours list based on contiguous areas).
 
@@ -259,21 +284,14 @@ The term ($v_i$) is an unstructured exchangeable component modelling uncorrelate
 
 ICAR specification for the spatial effect:
 
-$$ u_i \mid u_{-i} \sim N\left(\bar{u}_{\delta_i}, \frac{\sigma_u^2}{n_{\delta_i}}\right) $$
+$$ u_i \mid u_{-i} \sim N\left(\bar{u}_{\delta_i}, \frac{\sigma_u^2}{n_{\delta_i}}\right) 
+$$
 
 where ($delta_i$) is the set of neighbours of area (i), and ($n_{\delta\_i}$) is the number of neighbours of area (i). The local mean of neighbours is
 
 $$ \bar{u}_{\delta_i} = \frac{1}{n_{\delta_i}} \sum_{j \in \delta_i} u_j $$
 
 Bayesian hierarchical models can be fitted using a number of approaches such as integrated nested Laplace approximation (INLA) (Rue, Martino, and Chopin 2009) and Markov chain Monte Carlo (MCMC) methods (Gelman et al. 2013).
-
-Critiques to the BYM: 
-
-- As indicated by Wu & Banerjee (2024), Simpson et al. (2017) and Riebler et al. (2016) the error components are not identifiable and scaling issues complicate interpretation of the variance parameters in the BYM model.
-
-::: {.callout-note appearance="simple"}
-## Pay Attention EXPLAIN BETTER
-:::
 
 Set-up:
 
@@ -303,6 +321,7 @@ MCMC <- S.CARbym(
 
 print(MCMC$summary.results)
 ```
+
 To obtain the modelled SIR, we need to divide the fitted values by the expected values.
 
 We use `RR` to denote relative risk, which is the smoothed SIR (specifically, the median of the smoothed SIR), to distinguish it from the observed SIR. The posterior probability of the relative risk being greater than 1 (i.e. the proportion of MCMC iterations where the smoothed SIR is greater than 1) is also included, denoted by `PP` in the map area labels.
@@ -356,6 +375,99 @@ leaflet(map) %>%
   )
 ```
 
+Critiques to the BYM:
+
+As indicated by Wu & Banerjee (2024), Simpson et al. (2017) and Riebler et al. (2016) the error components are not identifiable and scaling issues complicate interpretation of the variance parameters in the BYM model.
+
+The BYM model is an extension of the ICAR model which includes an additional parameter for unstructured spatial random effects $v_i$:
+
+$$
+d_i = u_i + v_i
+$$ where
+
+$$v_i \sim \mathcal{N}\left(0, \sigma_v^2\right)$$ Effectively this means that the conditional expectation of ($u_i$) is equal to the mean of the random effects at neighbouring locations, which can be understood as a structured spatial random effect. $v_i$ accounts for pure overdispersion or non-spatial heterogeneity capturing local anomalies that are completely independent of the surrounding geographic topology.
+
+Note that there are two identifiability issues with tzhis model which have practical implications:
+
+a)  The variance parameters for the structured and unstructured components are not identifiable, meaning that it is not possible to determine how much of the variability in the data is due to spatially structured effects versus unstructured noise. This can lead to difficulties in interpreting the results and understanding the underlying spatial processes.
+
+b)  The scaling of the spatially structured component is not identifiable, which means that the magnitude of the spatial effects cannot be directly compared across different datasets or models, that is, the respective precision parameters do not operate on the same marginal scale. Its precision depends entirely on the specific topological graph structure (i.e., the number of neighbours), making hyperprior selection mathematically obscure and preventing the transferability of priors across different spatial applications. (Rieble et al., 2016).
+
+Paper which uses a modification so that $u_i$ and $v_i$ are identifiable separately, is Duncan, White, and Mengersen (2017).
+
+
+::: {.callout-note appearance="simple"}
+# Pay Attention EXPLAIN BETTER
+:::
+
+## Proper CAR model
+
+A proper CAR model addresses this by including an additional parameter $ρ$ which controls the overall level of spatial autocorrelation. The conditional distributions of the proper CAR are:
+
+$$
+s_i \mid {s}_i \sim \mathcal{N}\left(\frac{\rho}{\sum_j{w_{ij}}}\sum_j{w_{ij}s_j}, \frac{\sigma_s^2}{\sum_j{w_{ij}}}\right)
+$$
+
+where $\rho$ is constraint to $−1<\rho<1$, ensuring the precision matrix is positive definite (and therefore the covariance matrix exists), and the joint distribution is proper.
+
+The proper CAR model is not as popular as the ICAR model because it has several drawbacks: it potentially limits the breadth of the posterior spatial pattern, and for there to be a reasonable amount of spatial association, $\rho$ likely needs to be close to 1 (Banerjee, Carlin, and Gelfand 2014). In which case, one might as well use the ICAR model, which is more parsimonious (fewer parameters).
+
+## BYM2 model
+
+The BYM2 model, introduced by Simpson et al. (2017) and Riebler et al. (2016), is a reparameterisation of the BYM model that addresses the identifiability issues by , rather than relying on a single spatial effect to capture all noise, introduces a scaling parameter for the spatially structured component $u_i$, $u_*$ and a mixing parameter $\phi$ that controls the balance between the structured and unstructured components.
+
+Crucially, the BYM2 model mathematically scales the structured ICAR component so that its generalised marginal variance is approximately equal to one.
+
+The model can be expressed as:
+
+$$
+b = \frac{1}{\sqrt{\tau_\beta}} \left( \sqrt{1 - \phi}\, v + \sqrt{\phi}\, u_* \right)
+$$ 
+
+where $v_i$ is the unstructured component, $s_i$ is the structured component, $\tau_\beta$ is a precision parameter, and $\phi$ is the mixing parameter that controls the balance between the two components. And b denotes the composite spatial random effect for a specific geographic area. Note that there is only one precision parameter $\tau_\beta$ for the composite spatial effect, which is a weighted average of the structured and unstructured components, with weights determined by $\phi$. When $\phi=0$, the model reduces to pure, unstructured regional overdispersion, when $\phi=1$, the model operates as a purely structured spatial field, driven entirely by neighbourhood clustering.
+
+As such, the BYM2 model allows for separate estimation of the variance parameters for the structured and unstructured components, and it provides a more interpretable framework for understanding the spatial effects in the data.
+
+The BYM2 model has the following limitations:
+
+a)  Loss of the sparse topological structure characteristic of standard CAR models and therefore practitioners must deploy mathematically complex augmented parameterisations to preserve sparsity (Riebler et al., 2016).
+b)  Model becomes structurally cumbersome when applied to spatial networks that are not fully connected. Drastically increasing the indexing and coding complexity necessary to specify the model correctly (Morris et al., 2019).
+
+## Leroux model
+The formulation of the Leroux model by Leroux, Lei, and Breslow (2000) represents a significant methodological advancement in spatial epidemiology and econometrics because it mathematically resolves the severe limitations inherent to both the classical Besag-York-Mollié (BYM) convolution model and the proper Conditional Autoregressive (CAR) model (Riebler et al., 2016; Jahan et al. 2022).
+
+Rather than adding two distinct random vectors as BYM2, it formulates the precision matrix of this single effect as a weighted average of the ICAR precision matrix and an independent identity matrix, governed by a spatial dependence parameter $\rho$.
+Because the weighting occurs within the precision matrix itself, the additive decomposition of variance in the Leroux model happens conditionally (conditional on the effects in neighbouring areas), rather than marginally on the overall log-relative risk scale (Riebler et al., 2016).
+
+A critical methodological advantage of the BYM2 model over the Leroux model is its treatment of geometric scaling. Its precision parameter does not represent the true marginal precision, that is, it remains mathematically confounded with both the mixing parameter and the underlying graph structure (Riebler et al., 2016).
+
+
+## Geostatistical Model
+
+## Global Spline Models
+
+## CAR Dissimilarity Model
+
+## Locally Adaptive Model
+
+## Localised Autocorrelation Model
+
+## Leroux Scale Mixture Model
+
+# References
+
+Based mainly on:
+
+Betancourt, M. Hierarchical Modeling
+
+Duncan, E. W., S. M. Cramb, P. D. Baade, K. L. Mengersen, T. Saunders, and J. F. Aitken. 2024. Developing a Cancer Atlas using Bayesian Methods: A Practical Guide for Application and Interpretation, 2nd ed. Brisbane: Queensland University of Technology (QUT) and Cancer Council Queensland.
+
+McElreath, R. (2020). Statistical Rethinking: A Bayesian Course with Examples in R and STAN (2nd ed.). Chapman and Hall/CRC. https://doi.org/10.1201/9780429029608
+
+Moraga, Paula. (2019). Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny. Chapman & Hall/CRC Biostatistics Series.
+
+Riebler, A., Sørbye, S. H., Simpson, D., & Rue, H. (2016). An intuitive Bayesian spatial model for disease mapping that accounts for scaling (arXiv Preprint No. 1601.01180). arXiv. https://doi.org/10.48550/arXiv.1601.01180
+
 ```{r}
 #| label: reproducibility 
 
@@ -369,3 +481,4 @@ leaflet(map) %>%
 		    xfun::session_info()
 
 ```
+:::
