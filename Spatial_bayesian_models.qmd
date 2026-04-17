@@ -6,6 +6,7 @@ format:
   html:
     theme: lux
     html-math-method: mathjax
+    embed-resources: true
   pdf:
     documentclass: article 
 # Add table of contents
