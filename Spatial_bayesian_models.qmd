@@ -126,7 +126,7 @@ These notes make use of the following R packages and general set-up.
 
 -   Spatial autocorrelation: SA as data redundancy, SA as missing spatial variables, and SA as map pattern are different ways of viewing SA, and all mutually implicate one another (Griffith, 1992).
 -   Spatial heterogeneity:
--   Spatial confounding: Following Hodges and Reich (2010), refers to the difference in estimates provided by spatial and nonspatial models, refers to correlation between covariates and the spatial trend, which can influence the estimate of coefficients. Critiqued by Donegan (2024) .
+-   Spatial confounding: Following Hodges and Reich (2010), refers to the difference in estimates provided by spatial and nonspatial models, refers to correlation between covariates and the spatial trend, which can influence the estimate of coefficients. Critiqued by Donegan (2024).
 -   Hierarchical modelling:
 -   Exchangeability in the spatial context:
 -   Prior distributions are probability distributions on model parameters that specify beliefs about the relative plausibility of parameter values before seeing the data (Wagenmakers et al., 2018). These prior beliefs can then be updated with the data to obtain the posterior beliefs about the model parameters, following Bayes’ rule (Jeffreys, 1961).
@@ -134,43 +134,47 @@ These notes make use of the following R packages and general set-up.
 -   A prior is proper if two conditions hold: (1) All values of the probability distribution are equal to or greater than zero, and (2) the probability distribution sums to 1 for discrete data or integrates to 1 for continuous data (Veenman et al., 2023).
 -   Conjugate priors result in posterior distributions that belong to the same distribution family as the prior distribution (Fink, 1997a)
 
-
 ## Types of Models
 
-Following Cramb SM, Duncan EW, Baade PD, Mengersen KL, 2017. Investigation of Bayesian Spatial Models, two broad types of models were identified, namely "global" spatial smoothing models that have a common spatial smoothing term across the region, and "local" spatial smoothing models
-that allow for differential smoothing depending on neighbourhood characteristics.
+Following Cramb SM, Duncan EW, Baade PD, Mengersen KL, 2017. Investigation of Bayesian Spatial Models, two broad types of models were identified, namely "global" spatial smoothing models that have a common spatial smoothing term across the region, and "local" spatial smoothing models that allow for differential smoothing depending on neighbourhood characteristics.
 
-The specific models that were identified are listed below.
+The specific models that were identified in the literature are listed below.
 
-Global spatial smoothing:
-• Intrinsic CAR/BYM model (Besag et al., 1991)
-• Proper CAR model (Besag, 1974)
-• Leroux model (Leroux et al., 2000)
-• Geostatistical model (Clements et al., 2006)
-• Global spline models (Lang & Brezger, 2004)
+Global spatial smoothing: 
++ Intrinsic CAR/BYM model (Besag et al., 1991) 
++ Proper CAR model (Besag, 1974) 
++ Leroux model (Leroux et al., 2000) 
++ Geostatistical model (Clements et al., 2006) 
++ Global spline models (Lang & Brezger, 2004)
 
-Local spatial smoothing
-• CAR dissimilarity models (Lee & Mitchell, 2012)
-• Localised autocorrelation (Lee & Mitchell, 2013)
-• Locally adaptive model (Lee & Sarran, 2015)
-• Hidden Potts model (Green & Richardson, 2002)
-• Spatial partition model (Knorr-Held & Raßer, 2000, Denison & Holmes, 2001)
-• Weighted sum of spatial priors (Lawson & Clark, 2002)
-• Leroux scale mixture model (Congdon, 2017)
-• Local spline models (Goicoa et al., 2012, Perperoglou & Eilers, 2010)
-• Skew-elliptical areal spatial models (Nathoo & Ghosh, 2013).
+Local spatial smoothing 
++ CAR dissimilarity models (Lee & Mitchell, 2012) 
++ Localised autocorrelation (Lee & Mitchell, 2013) 
++ Locally adaptive model (Lee & Sarran, 2015) 
++ Hidden Potts model (Green & Richardson, 2002) 
++ Spatial partition model (Knorr-Held & Raßer, 2000, Denison & Holmes, 2001) 
++ Weighted sum of spatial priors (Lawson & Clark, 2002) 
++ Leroux scale mixture model (Congdon, 2017) 
++ Local spline models (Goicoa et al., 2012, Perperoglou & Eilers, 2010) 
++ Skew-elliptical areal spatial models (Nathoo & Ghosh, 2013).
 
+Specifically for identifying spatial step-changes, difference boundaries, or "social boundaries" the following models were designed to detect abrupt transitions in unobserved latent processes:
 
-Specifically for identifying spatial step-changes, difference boundaries, or "social boundaries" the following models were designed to detect abrupt transitions in unobserved latent processes: 
+1.  Foundational Univariate Areal Wombling (Lu and Carlin, 2005)
+2.  Stochastic Univariate Areal Wombling (Lu et al., 2007)
+3.  Covariate-Driven Dissimilarity Models (Lee and Mitchell, 2012)
+4.  Multivariate Boundary Detection
+    -   Site-Edge Shared (SESHARED) model (Ma and Carlin, 2007)
+    -   Multivariate Areally-Referenced Dirichlet Process (MARDP) model (Ma and Carlin, 2009)
+5.  Graph-Based and Spatio-Temporal Optimisation (Lee et al., 2021)
 
-1. Foundational Univariate Areal Wombling (Lu and Carlin, 2005) 
-2. Stochastic Univariate Areal Wombling (Lu et al., 2007) 
-3. Covariate-Driven Dissimilarity Models (Lee and Mitchell, 2012)
-4. Multivariate Boundary Detection 
-  - Site-Edge Shared (SESHARED) model (Ma and Carlin, 2007) 
-  - Multivariate Areally-Referenced Dirichlet Process (MARDP) model (Ma and Carlin, 2009)
-5. Graph-Based and Spatio-Temporal Optimisation (Lee et al., 2021) 
+Recent developments and future reserach directions in spatial modelling include the following:
 
+By formally modelling the directional curvature, researchers can rigorously analyse the differential behaviour of a spatial process, evaluating exactly how the response surface "bends" or accelerates along a wombling boundary rather than merely identifying where a static drop-off occurs. Directional curvature modelling extends traditional first-order gradient wombling by evaluating the second-order derivative processes of a spatial surface along a specified trajectory. While first-order spatial gradients are utilised to detect the steepness or absolute magnitude of change to delineate wombling boundaries, directional curvature processes formally characterise the "roughness" or the departure from spatial flatness along these transition zones
+
+Mathematically, this methodology assesses the rate of change of the derivative process along a specific vector field using the Hessian operator, $\nabla^2 Y(s)$. Through Bayesian hierarchical architectures, researchers can construct Gaussian process models that generate posterior predictive distributions for line integrals of these curvature measures over a continuous parametric curve (Halder and Banerjee, 2025). This novel framework allows analysts to assess the statistical significance of a proposed curvature boundary while formally robustly quantifying spatial uncertainty across the curve itself (Halder and Banerjee, 2025). Recent advancements have even extended these evaluations of surface roughness and directional change to compact Riemannian manifolds, enabling the analysis of spatial rates of change over complex, non-Euclidean vector fields (Halder and Banerjee, 2025).
+
+Nevertheless, directional curvature are explicitly designed for point-referenced (geostatistical) data, where variables are mapped at exact coordinates within a Euclidean frame, allowing researchers to estimate a sufficiently smooth, continuous spatial surface (Lu and Carlin, 2005). As such, these models will not be treated in this section, which focuses on areal data, where variables are aggregated over discrete spatial units (e.g., neighbourhoods, wards) and the spatial structure is defined by adjacency or distance between these units. For areal data.
 
 ## CARBayes Demo
 
@@ -491,13 +495,12 @@ a)  Loss of the sparse topological structure characteristic of standard CAR mode
 b)  Model becomes structurally cumbersome when applied to spatial networks that are not fully connected. Drastically increasing the indexing and coding complexity necessary to specify the model correctly (Morris et al., 2019).
 
 ## Geostatistical Model
+
 Conventional areal models, such as the Conditional Autoregressive (CAR) and Simultaneously Autoregressive (SAR) specifications, rely on discrete Markov Random Fields (MRFs) where spatial dependency is dictated by a sparse, binary adjacency matrix defined by shared geographic borders Duncan et al. (2024).
 
 In stark contrast, the geostatistical approach discards this discrete topological network, instead modelling the residual spatial structure as a continuous Gaussian process
 
-The Geostatistical model proposed by Clements et al. (2006) models the spatial structure as a Gaussian process: 
-
-
+The Geostatistical model proposed by Clements et al. (2006) models the spatial structure as a Gaussian process:
 
 ## Global Spline Models
 
