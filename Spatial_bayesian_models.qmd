@@ -134,6 +134,44 @@ These notes make use of the following R packages and general set-up.
 -   A prior is proper if two conditions hold: (1) All values of the probability distribution are equal to or greater than zero, and (2) the probability distribution sums to 1 for discrete data or integrates to 1 for continuous data (Veenman et al., 2023).
 -   Conjugate priors result in posterior distributions that belong to the same distribution family as the prior distribution (Fink, 1997a)
 
+
+## Types of Models
+
+Following Cramb SM, Duncan EW, Baade PD, Mengersen KL, 2017. Investigation of Bayesian Spatial Models, two broad types of models were identified, namely "global" spatial smoothing models that have a common spatial smoothing term across the region, and "local" spatial smoothing models
+that allow for differential smoothing depending on neighbourhood characteristics.
+
+The specific models that were identified are listed below.
+
+Global spatial smoothing:
+• Intrinsic CAR/BYM model (Besag et al., 1991)
+• Proper CAR model (Besag, 1974)
+• Leroux model (Leroux et al., 2000)
+• Geostatistical model (Clements et al., 2006)
+• Global spline models (Lang & Brezger, 2004)
+
+Local spatial smoothing
+• CAR dissimilarity models (Lee & Mitchell, 2012)
+• Localised autocorrelation (Lee & Mitchell, 2013)
+• Locally adaptive model (Lee & Sarran, 2015)
+• Hidden Potts model (Green & Richardson, 2002)
+• Spatial partition model (Knorr-Held & Raßer, 2000, Denison & Holmes, 2001)
+• Weighted sum of spatial priors (Lawson & Clark, 2002)
+• Leroux scale mixture model (Congdon, 2017)
+• Local spline models (Goicoa et al., 2012, Perperoglou & Eilers, 2010)
+• Skew-elliptical areal spatial models (Nathoo & Ghosh, 2013).
+
+
+Specifically for identifying spatial step-changes, difference boundaries, or "social boundaries" the following models were designed to detect abrupt transitions in unobserved latent processes: 
+
+1. Foundational Univariate Areal Wombling (Lu and Carlin, 2005) 
+2. Stochastic Univariate Areal Wombling (Lu et al., 2007) 
+3. Covariate-Driven Dissimilarity Models (Lee and Mitchell, 2012)
+4. Multivariate Boundary Detection 
+  - Site-Edge Shared (SESHARED) model (Ma and Carlin, 2007) 
+  - Multivariate Areally-Referenced Dirichlet Process (MARDP) model (Ma and Carlin, 2009)
+5. Graph-Based and Spatio-Temporal Optimisation (Lee et al., 2021) 
+
+
 ## CARBayes Demo
 
 This example is adapted from the following article by [Dr Paula Moraga](https://journal.r-project.org/archive/2018/RJ-2018-036/RJ-2018-036.pdf)
@@ -395,7 +433,6 @@ b)  The scaling of the spatially structured component is not identifiable, which
 
 Paper which uses a modification so that $u_i$ and $v_i$ are identifiable separately, is Duncan, White, and Mengersen (2017).
 
-
 ::: {.callout-note appearance="simple"}
 # Pay Attention EXPLAIN BETTER
 :::
@@ -412,6 +449,24 @@ where $\rho$ is constraint to $−1<\rho<1$, ensuring the precision matrix is po
 
 The proper CAR model is not as popular as the ICAR model because it has several drawbacks: it potentially limits the breadth of the posterior spatial pattern, and for there to be a reasonable amount of spatial association, $\rho$ likely needs to be close to 1 (Banerjee, Carlin, and Gelfand 2014). In which case, one might as well use the ICAR model, which is more parsimonious (fewer parameters).
 
+## Leroux model
+
+The formulation of the Leroux model by Leroux, Lei, and Breslow (2000) represents a significant methodological advancement in spatial epidemiology and econometrics because it mathematically resolves the severe limitations inherent to both the classical Besag-York-Mollié (BYM) convolution model and the proper Conditional Autoregressive (CAR) model (Riebler et al., 2016; Jahan et al. 2022).
+
+The model formulates the precision matrix of this single effect as a weighted average of the ICAR precision matrix and an independent identity matrix, governed by a spatial dependence parameter $\rho$.
+
+Because the weighting occurs within the precision matrix itself, the additive decomposition of variance in the Leroux model happens conditionally (conditional on the effects in neighbouring areas), rather than marginally on the overall log-relative risk scale (Riebler et al., 2016).
+
+$$
+S_i \mid {S}_{\smallsetminus i} \sim \mathcal{N}\left(\frac{\rho \sum_j{w_{ij}s_j} + (1-\rho)\mu_0}{\rho \sum_j{w_{ij}}+1-\rho}, \frac{\sigma_s^2}{\rho \sum_j{w_{ij}}+1-\rho}\right)
+$$
+
+The parameter $\rho$ weights the type of smoothing: the correlated smoothing of the neighbouring random effects, compared to the uncorrelated smoothing towards a global mean $\mu_0$ (weighted by $(1−\rho$) (Lee and Mitchell, 2012). This means an additional overall intercept should not be included in the model, otherwise it will lead to an over-parameterised model and cause identifiability issues. Thus $S_i$ has a conditional expectation based on a weighted average of both the independent (unstructured) random effects and the spatially structured random effects.
+
+Note that the Leroux model is a generalisation of the ICAR model and the independent model (i.e. a model without any structured spatial random effect). When $\rho$ is set to 1, the ICAR model is recovered. When $\rho$ is set to 0, the independent model is recovered. Thus the Leroux model attempts to find balance between these two models by estimating the value of $\rho$.
+
+One advantage of the Leroux model is that it avoids the identifiability issue since there is only one set of random effects, $S_i$. It also simplifies the difficulty in specifying hyperpriors (in the BYM model, the variance for $S_i$ is conditional on the neighbouring areas, while the variance for $v_i$ is marginal) (Riebler et al. 2016)
+
 ## BYM2 model
 
 The BYM2 model, introduced by Simpson et al. (2017) and Riebler et al. (2016), is a reparameterisation of the BYM model that addresses the identifiability issues by , rather than relying on a single spatial effect to capture all noise, introduces a scaling parameter for the spatially structured component $u_i$, $u_*$ and a mixing parameter $\phi$ that controls the balance between the structured and unstructured components.
@@ -422,27 +477,27 @@ The model can be expressed as:
 
 $$
 b = \frac{1}{\sqrt{\tau_\beta}} \left( \sqrt{1 - \phi}\, v + \sqrt{\phi}\, u_* \right)
-$$ 
+$$
 
 where $v_i$ is the unstructured component, $s_i$ is the structured component, $\tau_\beta$ is a precision parameter, and $\phi$ is the mixing parameter that controls the balance between the two components. And b denotes the composite spatial random effect for a specific geographic area. Note that there is only one precision parameter $\tau_\beta$ for the composite spatial effect, which is a weighted average of the structured and unstructured components, with weights determined by $\phi$. When $\phi=0$, the model reduces to pure, unstructured regional overdispersion, when $\phi=1$, the model operates as a purely structured spatial field, driven entirely by neighbourhood clustering.
 
 As such, the BYM2 model allows for separate estimation of the variance parameters for the structured and unstructured components, and it provides a more interpretable framework for understanding the spatial effects in the data.
+
+A critical methodological advantage of the BYM2 model over the Leroux model is its treatment of geometric scaling. Its precision parameter does not represent the true marginal precision, that is, it remains mathematically confounded with both the mixing parameter and the underlying graph structure (Riebler et al., 2016).
 
 The BYM2 model has the following limitations:
 
 a)  Loss of the sparse topological structure characteristic of standard CAR models and therefore practitioners must deploy mathematically complex augmented parameterisations to preserve sparsity (Riebler et al., 2016).
 b)  Model becomes structurally cumbersome when applied to spatial networks that are not fully connected. Drastically increasing the indexing and coding complexity necessary to specify the model correctly (Morris et al., 2019).
 
-## Leroux model
-The formulation of the Leroux model by Leroux, Lei, and Breslow (2000) represents a significant methodological advancement in spatial epidemiology and econometrics because it mathematically resolves the severe limitations inherent to both the classical Besag-York-Mollié (BYM) convolution model and the proper Conditional Autoregressive (CAR) model (Riebler et al., 2016; Jahan et al. 2022).
-
-Rather than adding two distinct random vectors as BYM2, it formulates the precision matrix of this single effect as a weighted average of the ICAR precision matrix and an independent identity matrix, governed by a spatial dependence parameter $\rho$.
-Because the weighting occurs within the precision matrix itself, the additive decomposition of variance in the Leroux model happens conditionally (conditional on the effects in neighbouring areas), rather than marginally on the overall log-relative risk scale (Riebler et al., 2016).
-
-A critical methodological advantage of the BYM2 model over the Leroux model is its treatment of geometric scaling. Its precision parameter does not represent the true marginal precision, that is, it remains mathematically confounded with both the mixing parameter and the underlying graph structure (Riebler et al., 2016).
-
-
 ## Geostatistical Model
+Conventional areal models, such as the Conditional Autoregressive (CAR) and Simultaneously Autoregressive (SAR) specifications, rely on discrete Markov Random Fields (MRFs) where spatial dependency is dictated by a sparse, binary adjacency matrix defined by shared geographic borders Duncan et al. (2024).
+
+In stark contrast, the geostatistical approach discards this discrete topological network, instead modelling the residual spatial structure as a continuous Gaussian process
+
+The Geostatistical model proposed by Clements et al. (2006) models the spatial structure as a Gaussian process: 
+
+
 
 ## Global Spline Models
 
@@ -481,4 +536,5 @@ Riebler, A., Sørbye, S. H., Simpson, D., & Rue, H. (2016). An intuitive Bayesia
 		    xfun::session_info()
 
 ```
+
 :::
