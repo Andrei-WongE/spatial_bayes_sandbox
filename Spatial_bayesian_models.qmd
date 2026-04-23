@@ -1,6 +1,6 @@
 ---
-title: "Spatial Bayesian models"
-author: "[Andrei Wong Espejo](https://github.com/Andrei-WongE)"
+title: "Notes on Spatial Bayesian models"
+author: "Andrei, Wong Espejo"
 date: "April 16, 2026"
 format:
   html:
@@ -10,6 +10,11 @@ format:
     toc: true
     toc-location: left
     smooth-scroll: true
+    lightbox:
+# auto = all images; otherwise only those with .lightbox class
+      match: auto
+# "zoom", "fade", or "none"
+      effect: fade 
   pdf:
     documentclass: article 
 # Add table of contents
@@ -72,7 +77,7 @@ knitted_doc_url <- downlit::autolink_url("knitr::knit()")
 
 Note updated on `r knitted_when` from `r knitted_where` with knitr version `r knitted_with`.
 
-::: callout-note
+::: {.callout-note collapse="true"}
 ## General set-up of the program.
 
 These notes make use of the following R packages and general set-up.
@@ -109,7 +114,7 @@ These notes make use of the following R packages and general set-up.
   options(scipen = 100, digits = 2)             # Prefer non-scientific notation
   
   knitr::opts_chunk$set( dev       = "ragg_png"
-                        ,fig.path  = "Figs/"
+                        ,fig.path  = "Images/"
                         ,dpi       = 600
                         ,fig.width = 10
                         ,fig.hight = 12
@@ -120,43 +125,76 @@ These notes make use of the following R packages and general set-up.
 ```
 :::
 
-# Spatial Bayesian models
+# Basic concepts
 
-## Basic concepts
+::: {.callout-note collapse="true"}
+## Spatial autocorrelation
 
--   Spatial autocorrelation: SA as data redundancy, SA as missing spatial variables, and SA as map pattern are different ways of viewing SA, and all mutually implicate one another (Griffith, 1992).
--   Spatial heterogeneity:
--   Spatial confounding: Following Hodges and Reich (2010), refers to the difference in estimates provided by spatial and nonspatial models, refers to correlation between covariates and the spatial trend, which can influence the estimate of coefficients. Critiqued by Donegan (2024).
--   Hierarchical modelling:
--   Exchangeability in the spatial context:
--   Prior distributions are probability distributions on model parameters that specify beliefs about the relative plausibility of parameter values before seeing the data (Wagenmakers et al., 2018). These prior beliefs can then be updated with the data to obtain the posterior beliefs about the model parameters, following Bayes’ rule (Jeffreys, 1961).
--   Jeffreys–Lindley paradox: any effect is unlikely under the prior, as a wide range of effects is deemed plausible. This influences model comparisons: the support for the null hypothesis becomes increasingly large.
--   A prior is proper if two conditions hold: (1) All values of the probability distribution are equal to or greater than zero, and (2) the probability distribution sums to 1 for discrete data or integrates to 1 for continuous data (Veenman et al., 2023).
--   Conjugate priors result in posterior distributions that belong to the same distribution family as the prior distribution (Fink, 1997a)
+As data redundancy, as missing spatial variables, and as a map pattern are different ways of viewing spatial autocorrelation, and all mutually implicate one another (Griffith, 1992).
+:::
 
-## Types of Models
+::: {.callout-note collapse="true"}
+## Spatial confounding
+
+Following Hodges and Reich (2010), refers to the difference in estimates provided by spatial and nonspatial models, arising from correlation between covariates and the spatial trend, which can influence coefficient estimates (see critique in Donegan, 2024).
+:::
+
+::: {.callout-note collapse="true"}
+## Exchangeability (spatial)
+
+When researchers observe discrete heterogeneity across different groups or contexts—such as distinct geographical units, time periods, or demographic cohorts—but lack a canonical theoretical mechanism to logically order, arrange, or differentiate these contexts a priori, the latent parameters governing these contexts are assumed to be exchangeable (Betancourt).
+
+Rather than estimating each parameter in complete isolation, the hierarchical architecture allows observations within one specific context to inform the overarching hyperparameters, which consequently regularise the parameter estimates of all other exchangeable contexts (Betancourt).
+:::
+
+::: {.callout-note collapse="true"}
+## Prior distributions
+
+Prior distributions place probabilities on parameter values before seeing the data; these beliefs are updated with observed data via Bayes’ rule to obtain posterior beliefs (e.g., Wagenmakers et al., 2018; Jeffreys, 1961).
+:::
+
+::: {.callout-note collapse="true"}
+## Jeffreys–Lindley paradox
+
+Wide priors that spread mass over many possible effect sizes can make any specific effect unlikely a priori, so evidence can increasingly favor the null hypothesis in model comparison even when a classical test rejects it.
+:::
+
+::: {.callout-note collapse="true"}
+## Proper priors
+
+A prior is proper if all probabilities are non‑negative and the distribution sums
+(discrete) or integrates (continuous) to 1 (Veenman et al., 2023).
+:::
+
+::: {.callout-note collapse="true"}
+## Conjugate priors
+
+Conjugate priors are chosen so that the posterior distribution belongs to the same family as the prior, which often simplifies analytic or computational work (Fink, 1997a).
+:::
+
+# Types of Models
 
 Following Cramb SM, Duncan EW, Baade PD, Mengersen KL, 2017. Investigation of Bayesian Spatial Models, two broad types of models were identified, namely "global" spatial smoothing models that have a common spatial smoothing term across the region, and "local" spatial smoothing models that allow for differential smoothing depending on neighbourhood characteristics.
 
 The specific models that were identified in the literature are listed below.
 
-Global spatial smoothing: 
-+ Intrinsic CAR/BYM model (Besag et al., 1991) 
-+ Proper CAR model (Besag, 1974) 
-+ Leroux model (Leroux et al., 2000) 
-+ Geostatistical model (Clements et al., 2006) 
-+ Global spline models (Lang & Brezger, 2004)
+-   Global spatial smoothing:
+    -   Intrinsic CAR/BYM model (Besag et al., 1991)
+    -   Proper CAR model (Besag, 1974)
+    -   Leroux model (Leroux et al., 2000)
+    -   Geostatistical model (Clements et al., 2006)
+    -   Global spline models (Lang & Brezger, 2004)
 
-Local spatial smoothing 
-+ CAR dissimilarity models (Lee & Mitchell, 2012) 
-+ Localised autocorrelation (Lee & Mitchell, 2013) 
-+ Locally adaptive model (Lee & Sarran, 2015) 
-+ Hidden Potts model (Green & Richardson, 2002) 
-+ Spatial partition model (Knorr-Held & Raßer, 2000, Denison & Holmes, 2001) 
-+ Weighted sum of spatial priors (Lawson & Clark, 2002) 
-+ Leroux scale mixture model (Congdon, 2017) 
-+ Local spline models (Goicoa et al., 2012, Perperoglou & Eilers, 2010) 
-+ Skew-elliptical areal spatial models (Nathoo & Ghosh, 2013).
+-   Local spatial smoothing
+    -   CAR dissimilarity models (Lee & Mitchell, 2012)
+    -   Localised autocorrelation (Lee & Mitchell, 2013)
+    -   Locally adaptive model (Lee & Sarran, 2015)
+    -   Hidden Potts model (Green & Richardson, 2002)
+    -   Spatial partition model (Knorr-Held & Raßer, 2000, Denison & Holmes, 2001)
+    -   Weighted sum of spatial priors (Lawson & Clark, 2002)
+    -   Leroux scale mixture model (Congdon, 2017)
+    -   Local spline models (Goicoa et al., 2012, Perperoglou & Eilers, 2010)
+    -   Skew-elliptical areal spatial models (Nathoo & Ghosh, 2013).
 
 Specifically for identifying spatial step-changes, difference boundaries, or "social boundaries" the following models were designed to detect abrupt transitions in unobserved latent processes:
 
@@ -168,15 +206,22 @@ Specifically for identifying spatial step-changes, difference boundaries, or "so
     -   Multivariate Areally-Referenced Dirichlet Process (MARDP) model (Ma and Carlin, 2009)
 5.  Graph-Based and Spatio-Temporal Optimisation (Lee et al., 2021)
 
-Recent developments and future reserach directions in spatial modelling include the following:
+Recent developments and future research directions in Bayesian spatial modelling include the following:
 
-By formally modelling the directional curvature, researchers can rigorously analyse the differential behaviour of a spatial process, evaluating exactly how the response surface "bends" or accelerates along a wombling boundary rather than merely identifying where a static drop-off occurs. Directional curvature modelling extends traditional first-order gradient wombling by evaluating the second-order derivative processes of a spatial surface along a specified trajectory. While first-order spatial gradients are utilised to detect the steepness or absolute magnitude of change to delineate wombling boundaries, directional curvature processes formally characterise the "roughness" or the departure from spatial flatness along these transition zones
+By formally modelling the directional curvature, researchers can rigorously analyse the differential behaviour of a spatial process, evaluating exactly how the response surface "bends" or accelerates along a wombling boundary rather than merely identifying where a static drop-off occurs. Directional curvature modelling extends traditional first-order gradient wombling by evaluating the second-order derivative processes of a spatial surface along a specified trajectory. While first-order spatial gradients are utilised to detect the steepness or absolute magnitude of change to delineate wombling boundaries, directional curvature processes formally characterise the "roughness" or the departure from spatial flatness along these transition zones.
 
 Mathematically, this methodology assesses the rate of change of the derivative process along a specific vector field using the Hessian operator, $\nabla^2 Y(s)$. Through Bayesian hierarchical architectures, researchers can construct Gaussian process models that generate posterior predictive distributions for line integrals of these curvature measures over a continuous parametric curve (Halder and Banerjee, 2025). This novel framework allows analysts to assess the statistical significance of a proposed curvature boundary while formally robustly quantifying spatial uncertainty across the curve itself (Halder and Banerjee, 2025). Recent advancements have even extended these evaluations of surface roughness and directional change to compact Riemannian manifolds, enabling the analysis of spatial rates of change over complex, non-Euclidean vector fields (Halder and Banerjee, 2025).
 
-Nevertheless, directional curvature are explicitly designed for point-referenced (geostatistical) data, where variables are mapped at exact coordinates within a Euclidean frame, allowing researchers to estimate a sufficiently smooth, continuous spatial surface (Lu and Carlin, 2005). As such, these models will not be treated in this section, which focuses on areal data, where variables are aggregated over discrete spatial units (e.g., neighbourhoods, wards) and the spatial structure is defined by adjacency or distance between these units. For areal data.
+Nevertheless, directional curvature are explicitly designed for point-referenced (geostatistical) data, where variables are mapped at exact coordinates within a Euclidean frame, allowing researchers to estimate a sufficiently smooth, continuous spatial surface (Lu and Carlin, 2005). As such, these models will not be treated in this section, which focuses on areal data, where variables are aggregated over discrete spatial units (e.g., neighbourhoods, wards) and the spatial structure is defined by adjacency or distance between these units.
 
-## CARBayes Demo
+# From global models to local boundaries
+
+![Basic structure of models](Images/Hierarchy.png)
+
+
+![Summary of models review](Images/Summary.png)
+
+## Basic CAR Bayes
 
 This example is adapted from the following article by [Dr Paula Moraga](https://journal.r-project.org/archive/2018/RJ-2018-036/RJ-2018-036.pdf)
 
@@ -429,7 +474,7 @@ $$ where
 
 $$v_i \sim \mathcal{N}\left(0, \sigma_v^2\right)$$ Effectively this means that the conditional expectation of ($u_i$) is equal to the mean of the random effects at neighbouring locations, which can be understood as a structured spatial random effect. $v_i$ accounts for pure overdispersion or non-spatial heterogeneity capturing local anomalies that are completely independent of the surrounding geographic topology.
 
-Note that there are two identifiability issues with tzhis model which have practical implications:
+Note that there are two identifiability issues with this model which have practical implications:
 
 a)  The variance parameters for the structured and unstructured components are not identifiable, meaning that it is not possible to determine how much of the variability in the data is due to spatially structured effects versus unstructured noise. This can lead to difficulties in interpreting the results and understanding the underlying spatial processes.
 
@@ -512,13 +557,74 @@ The Geostatistical model proposed by Clements et al. (2006) models the spatial s
 
 ## Leroux Scale Mixture Model
 
+# Lets Go Kinky: The Conceptual Evolution of Wombling
+
+The term wombling finds its origins in the seminal work of William H. Womble in 1951, who pioneered the detection of "discontinuities" or "edges" in biological data (Liang et al., 2009). Originally, the field was categorized alongside edge detection in image analysis and barrier analysis in landscape topography (Fitzpatrick et al., 2010). However, unlike image analysis, where edges often represent discrete breaks or "cliffs," wombling boundaries typically capture rapid surface change within a continuous or quasi-continuous spatial field (Banerjee, 2010: In Handbook of Spatial Statistics). For an extensive treatment of the method see Logan et al. (2011) and Spielman & Logan (2013).
+
+In modern spatial statistics, boundary analysis is distinct from cluster analysis. While the latter focuses on classifying regions into homogeneous groups, boundary analysis prioritizes the transition itself, **the "line" or "curve" where the spatial gradient is steepest**, that is, finding "kinks" in a spatial surface rather than "clumps" of similar values. 
+
+> The underlying scientific interest lies in determining what distinguishes the areas on either side of a boundary rather than focusing on the internal characteristics of a specific cluster (Lu and Carlin, 2005).
+
+These models are extensively used in public health, to identify areas where disease patterns change abruptly (Jacquez, 2010) and ecology to detect ecotones, which are zones of rapid change in species composition (Dale & Fortin, 2014).
+
+## Paradigms of Boundary Elements
+
+This section is based on [this website](https://www.passagesoftware.net/webhelp/Wombling_Analysis.htm)
+
+Traditional boundary detection is often bifurcated into categorical and continuous methods, depending on the spatial configuration and the data structure under investigation.
+
+| Wombling Category | Data Structure | Elemental Definition | Quantitative Metric |
+|------------------|------------------|------------------|-------------------|
+| Categorical | Surface or Scattered | Line segments or tessellation edges | Inter-point distance or dissimilarity |
+| Continuous | Grid or Triangulated | Centroids of geometric units | First partial derivatives (gradients) |
+
+Categorical wombling, sometimes referred to as two-point wombling, identifies boundary elements as line segments between adjacent data points. In a lattice or surface data setting, these elements correspond to the common edges of adjacent cells. For scattered point data, a Voronoi tessellation is typically constructed to define the boundaries, where the magnitude of change is calculated as the distance (often multivariate) between the data points on either side. **Notably, categorical wombling does not produce a directional vector, focusing solely on the magnitude of disparity.**
+
+Continuous wombling identifies boundary elements at the centroids of sets of more than two data points—such as the corners of four cells in a grid or the centroids of triangles in a Delaunay triangulation. This method utilizes the values of surrounding points to estimate the magnitude and direction of change as the first partial derivative of the variable in the x and y directions.This gradient-based approach allows for the connection of adjacent boundary elements into "sub boundaries" based on criteria such as the top percentile of change magnitude and the angular consistency of the gradient vectors (Banerjee and Gelfand, 2006).
+
+## Foundational Univariate Areal Wombling
+(Lu and Carlin, 2005)
+
+## Stochastic Univariate Areal Wombling 
+(Lu et al., 2007)
+
+## Covariate-Driven Dissimilarity Models 
+(Lee and Mitchell, 2012)
+
+## Multivariate Boundary Detection
+
+### Site-Edge Shared (SESHARED) model 
+(Ma and Carlin, 2007)
+
+### Multivariate Areally-Referenced Dirichlet Process (MARDP) model 
+(Ma and Carlin, 2009)
+
+## Graph-Based and Spatio-Temporal Optimisation
+(Lee et al., 2021)
+
+
+## Bayesian Model Evaluation and Prior Sensitivity
+
+
+## Software Implementation and Workflow
+
+# To End: Methodological Challenges and Advanced Perspectives
+
+## Spatial Confounding and Model Selection
+
+## Prior Sensitivity and Robustness
+
+## Computational Complexity and Large Datasets
+
 # References
 
 Based mainly on:
 
 Betancourt, M. Hierarchical Modeling
 
-Duncan, E. W., S. M. Cramb, P. D. Baade, K. L. Mengersen, T. Saunders, and J. F. Aitken. 2024. Developing a Cancer Atlas using Bayesian Methods: A Practical Guide for Application and Interpretation, 2nd ed. Brisbane: Queensland University of Technology (QUT) and Cancer Council Queensland.
+Duncan, E. W., S. M. Cramb, P. D. Baade, K. L. Mengersen, T. Saunders, and J. F. Aitken. (2024). Developing a Cancer Atlas using Bayesian Methods: A Practical Guide for Application and Interpretation, 2nd ed. Brisbane: Queensland University of Technology (QUT) and Cancer Council Queensland.
+
+Liang S, Banerjee S, Carlin BP. Bayesian wombling for spatial point processes. Biometrics. (2009) Dec;65(4):1243-53. doi: 10.1111/j.1541-0420.2009.01203.x.
 
 McElreath, R. (2020). Statistical Rethinking: A Bayesian Course with Examples in R and STAN (2nd ed.). Chapman and Hall/CRC. https://doi.org/10.1201/9780429029608
 
@@ -526,8 +632,14 @@ Moraga, Paula. (2019). Geospatial Health Data: Modeling and Visualization with R
 
 Riebler, A., Sørbye, S. H., Simpson, D., & Rue, H. (2016). An intuitive Bayesian spatial model for disease mapping that accounts for scaling (arXiv Preprint No. 1601.01180). arXiv. https://doi.org/10.48550/arXiv.1601.01180
 
+
+::: {.callout-note collapse="true"}
+# Reproducibility
+
 ```{r}
 #| label: reproducibility 
+#| code-fold: true
+#| code-summary: "Show reproducibility details"
 
 		    ## Datetime
 		    Sys.time()
