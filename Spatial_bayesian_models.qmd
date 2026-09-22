@@ -1,11 +1,19 @@
 ---
 title: "Notes on Spatial Bayesian models"
 author: "Andrei, Wong Espejo"
-date: "April 16, 2026"
+date: "September 21, 2026"
 format:
   html:
     theme: lux
     html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          loader: {load: ['[tex]/bbox', '[tex]/color']},
+          tex: { packages: {'[+]': ['bbox', 'color']} }
+        };
+        </script>
     embed-resources: true
     toc: true
     toc-location: left
@@ -15,39 +23,34 @@ format:
       match: auto
 # "zoom", "fade", or "none"
       effect: fade 
-  pdf:
-    documentclass: article 
-# Add table of contents
-    toc: true
-    toc_float: true
     toc-depth: 2
-    toc-location: left
-    toc-title: "On this page"
+    toc-title: "Topics covered"
     number-sections: true
-# By default smooth scroll is not enabled
-    smooth-scroll: true
     link-external-icon: false
     link-external-newwindow: true
     highlight-style: github
-# Fold code (initially hidden)
     code-fold: true
-    code_download: yes
+    code-tools: true
     code-link: true
     code-block-bg: true
     code-block-border-left: "#ADBBCB"
-    table-captions: true 
+    fig-cap-location: top
     tbl-cap-location: margin
     reference-location: margin
     citation-location: margin
-# Text for footer
     include-after-body: footer.html
+  pdf:
+    documentclass: article
+    toc: true
+    toc-depth: 2
+    number-sections: true
     
 citation:
   type: post
   url: "https://github.com/Andrei-WongE/spatial_bayes_sandbox"
   
 # Allow for highlighting text. \hl{highlight} text inline.Or \hl{\textbf{highlight}} with bold face.
-# Allows fort commenting using hypothesis
+# Allows for commenting using hypothesis
 comments:
   hypothesis: true 
 
@@ -57,11 +60,15 @@ execute:
   freeze: auto  # re-render only when source changes
 ---
 
+```{=html}
+<!--
 ::: callout-warning
 NO PDF: chromote–Chrome compatibility issue that appeared with newer Chrome builds (very similar errors were reported around Chrome v128+, breaking chrome_print() / chromote on multiple systems).
 
 Brute force `quarto render Spatial_bayesian_models.qmd --to html`
 :::
+-->
+```
 
 # Set-up
 
@@ -136,7 +143,7 @@ As data redundancy, as missing spatial variables, and as a map pattern are diffe
 ::: {.callout-note collapse="true"}
 ## Spatial confounding
 
-Following Hodges and Reich (2010), refers to the difference in estimates provided by spatial and nonspatial models, arising from correlation between covariates and the spatial trend, which can influence coefficient estimates (see critique in Donegan, 2024).
+Following Hodges and Reich (2010), refers to the difference in estimates provided by spatial and nonspatial models, arising from correlation between covariates and the spatial trend, which can influence coefficient estimates (see critique in Donegan, 2025).
 :::
 
 ::: {.callout-note collapse="true"}
@@ -162,39 +169,37 @@ Wide priors that spread mass over many possible effect sizes can make any specif
 ::: {.callout-note collapse="true"}
 ## Proper priors
 
-A prior is proper if all probabilities are non‑negative and the distribution sums
-(discrete) or integrates (continuous) to 1 (Veenman et al., 2023).
+A prior is proper if all probabilities are non‑negative and the distribution sums (discrete) or integrates (continuous) to 1 (Veenman et al., 2024).
 :::
 
 ::: {.callout-note collapse="true"}
 ## Conjugate priors
 
-Conjugate priors are chosen so that the posterior distribution belongs to the same family as the prior, which often simplifies analytic or computational work (Fink, 1997a).
+Conjugate priors are chosen so that the posterior distribution belongs to the same family as the prior, which often simplifies analytic or computational work (Fink, 1997).
 :::
 
 # Types of Models
 
-Following Cramb SM, Duncan EW, Baade PD, Mengersen KL, 2017. Investigation of Bayesian Spatial Models, two broad types of models were identified, namely "global" spatial smoothing models that have a common spatial smoothing term across the region, and "local" spatial smoothing models that allow for differential smoothing depending on neighbourhood characteristics.
+Following "Cramb SM, Duncan EW, Baade PD, Mengersen KL, 2017. Investigation of Bayesian Spatial Models", two broad types of models were identified, namely "global" spatial smoothing models that have a common spatial smoothing term across the region, and "local" spatial smoothing models that allow for differential smoothing depending on neighbourhood characteristics.
 
-The specific models that were identified in the literature are listed below.
+The specific models that were identified in the literature are listed below:
 
--   Global spatial smoothing:
-    -   Intrinsic CAR/BYM model (Besag et al., 1991)
-    -   Proper CAR model (Besag, 1974)
-    -   Leroux model (Leroux et al., 2000)
-    -   Geostatistical model (Clements et al., 2006)
-    -   Global spline models (Lang & Brezger, 2004)
-
--   Local spatial smoothing
-    -   CAR dissimilarity models (Lee & Mitchell, 2012)
-    -   Localised autocorrelation (Lee & Mitchell, 2013)
-    -   Locally adaptive model (Lee & Sarran, 2015)
-    -   Hidden Potts model (Green & Richardson, 2002)
-    -   Spatial partition model (Knorr-Held & Raßer, 2000, Denison & Holmes, 2001)
-    -   Weighted sum of spatial priors (Lawson & Clark, 2002)
-    -   Leroux scale mixture model (Congdon, 2017)
-    -   Local spline models (Goicoa et al., 2012, Perperoglou & Eilers, 2010)
-    -   Skew-elliptical areal spatial models (Nathoo & Ghosh, 2013).
+- Global spatial smoothing:
+  - Intrinsic CAR/BYM model (Besag et al., 1991)
+  - Proper CAR model (Besag, 1974)
+  - Leroux model (Leroux et al., 2000)
+  - Geostatistical model (Clements et al., 2009)
+  - Global spline models (Lang & Brezger, 2004)
+- Local spatial smoothing
+  - CAR dissimilarity models (Lee & Mitchell, 2012)
+  - Localised autocorrelation (Lee & Mitchell, 2013)
+  - Locally adaptive model (Lee & Sarran, 2015)
+  - Hidden Potts model (Green & Richardson, 2002)
+  - Spatial partition model (Knorr-Held & Raßer, 2000, Denison & Holmes, 2001)
+  - Weighted sum of spatial priors (Lawson & Clark, 2002)
+  - Leroux scale mixture model (Congdon, 2017)
+  - Local spline models (Goicoa et al., 2012, Perperoglou & Eilers, 2010)
+  - Skew-elliptical areal spatial models (Nathoo & Ghosh, 2013).
 
 Specifically for identifying spatial step-changes, difference boundaries, or "social boundaries" the following models were designed to detect abrupt transitions in unobserved latent processes:
 
@@ -202,24 +207,27 @@ Specifically for identifying spatial step-changes, difference boundaries, or "so
 2.  Stochastic Univariate Areal Wombling (Lu et al., 2007)
 3.  Covariate-Driven Dissimilarity Models (Lee and Mitchell, 2012)
 4.  Multivariate Boundary Detection
-    -   Site-Edge Shared (SESHARED) model (Ma and Carlin, 2007)
-    -   Multivariate Areally-Referenced Dirichlet Process (MARDP) model (Ma and Carlin, 2009)
-5.  Graph-Based and Spatio-Temporal Optimisation (Lee et al., 2021)
+    - Site-Edge Shared (SESHARED) model (Ma and Carlin, 2007)
+    - Multivariate Areally-Referenced Dirichlet Process (MARDP) model (Gao et al., 2023)
+5.  Graph-Based and Spatio-Temporal Optimisation (Lee et al., 2018)
 
 Recent developments and future research directions in Bayesian spatial modelling include the following:
 
-By formally modelling the directional curvature, researchers can rigorously analyse the differential behaviour of a spatial process, evaluating exactly how the response surface "bends" or accelerates along a wombling boundary rather than merely identifying where a static drop-off occurs. Directional curvature modelling extends traditional first-order gradient wombling by evaluating the second-order derivative processes of a spatial surface along a specified trajectory. While first-order spatial gradients are utilised to detect the steepness or absolute magnitude of change to delineate wombling boundaries, directional curvature processes formally characterise the "roughness" or the departure from spatial flatness along these transition zones.
+Directional curvature extends first-order gradient wombling by examining second derivatives of a sufficiently smooth spatial surface. Gradients describe directional rates of change; curvature describes how those rates change. Halder, Banerjee, and Dey (2024) develop Bayesian inference for these processes and their integrals along curves, with posterior uncertainty for the resulting curvature measures.
 
-Mathematically, this methodology assesses the rate of change of the derivative process along a specific vector field using the Hessian operator, $\nabla^2 Y(s)$. Through Bayesian hierarchical architectures, researchers can construct Gaussian process models that generate posterior predictive distributions for line integrals of these curvature measures over a continuous parametric curve (Halder and Banerjee, 2025). This novel framework allows analysts to assess the statistical significance of a proposed curvature boundary while formally robustly quantifying spatial uncertainty across the curve itself (Halder and Banerjee, 2025). Recent advancements have even extended these evaluations of surface roughness and directional change to compact Riemannian manifolds, enabling the analysis of spatial rates of change over complex, non-Euclidean vector fields (Halder and Banerjee, 2025).
+The relevant differential object is the Hessian $H_Y(s)=\nabla\nabla^\top Y(s)$; curvature in a unit direction $v$ is $v^\top H_Y(s)v$. For a Matérn field, mean-square first derivatives require $\nu>1$, whereas second derivatives require $\nu>2$. Halder and Banerjee (2025) describe related point-referenced wombling tools in `nimblewomble`.
 
-Nevertheless, directional curvature are explicitly designed for point-referenced (geostatistical) data, where variables are mapped at exact coordinates within a Euclidean frame, allowing researchers to estimate a sufficiently smooth, continuous spatial surface (Lu and Carlin, 2005). As such, these models will not be treated in this section, which focuses on areal data, where variables are aggregated over discrete spatial units (e.g., neighbourhoods, wards) and the spatial structure is defined by adjacency or distance between these units.
+These continuous-process methods require a specified spatial domain and sufficient differentiability. They are mentioned for context here; the following models primarily concern areal observations and their neighbourhood graph (Lu and Carlin, 2005).
 
 # From global models to local boundaries
 
-![Basic structure of models](Images/Hierarchy.png)
+We start with a visual summary of the basic structure of spatial Bayesian models, @fig-HB and different types of models, as illustrated by @fig-Bayesmodels. Figures were made by AI, as such stating "Allows for reliable and stable estimates" is an misnomer. Other issues with these figures will be clear after reading this note.
 
+As you embark on this journey, the road ahead is full of dead ends and uncertain bifurcations. This note aims to deepening your understanding of the complexities involved in selecting and configuring these type of models. One of the outstanding difficulties is choosing the type of prior that will appropriately characterise the spatial nature of the data of interest. Achieving a satisfactory level of smoothing is therefore a difficult task, which affects the plausibility of estimates. In general, a deep understanding of the data at hand is essential for the selection of (an) adequate model(s). Specially, identifying data characteristics (the likely disparities in neighbouring areas, considered to be likely if there is evidence of a trend across socioeconomic quintiles) will help to choose the most appropriate model.
 
-![Summary of models review](Images/Summary.png)
+![Basic structure of models](Images/Hierarchy.png){#fig-HB}
+
+![Summary of reviewed models](Images/Summary.png){#fig-Bayesmodels}
 
 ## Basic CAR Bayes
 
@@ -294,7 +302,7 @@ pal <- colorNumeric(palette = "YlOrRd", domain = map$SIR)
 ```{r}
 # Observed SIR map
 leaflet(map) %>%
-  addTiles() %>%
+  addProviderTiles("CartoDB.Positron") %>%
   addPolygons(
     color       = "grey",
     weight      = 1,
@@ -324,7 +332,7 @@ labels <- sprintf(
   lapply(htmltools::HTML)
 
 leaflet(map) %>%
-  addTiles() %>%
+  addProviderTiles("CartoDB.Positron") %>%
   addPolygons(
     color           = "grey",
     weight          = 1,
@@ -439,7 +447,7 @@ labels <- sprintf(
   lapply(htmltools::HTML)
 
 leaflet(map) %>%
-  addTiles() %>%
+  addProviderTiles("CartoDB.Positron") %>%
   addPolygons(
     color           = "grey",
     weight          = 1,
@@ -464,117 +472,438 @@ leaflet(map) %>%
 
 Critiques to the BYM:
 
-As indicated by Wu & Banerjee (2024), Simpson et al. (2017) and Riebler et al. (2016) the error components are not identifiable and scaling issues complicate interpretation of the variance parameters in the BYM model.
+Riebler et al. (2016) discuss the difficulty of separating the BYM components and interpreting their unscaled variance parameters. Scaling and prior choice therefore require explicit attention.
 
 The BYM model is an extension of the ICAR model which includes an additional parameter for unstructured spatial random effects $v_i$:
 
 $$
 d_i = u_i + v_i
-$$ where
+$$
+
+where
 
 $$v_i \sim \mathcal{N}\left(0, \sigma_v^2\right)$$ Effectively this means that the conditional expectation of ($u_i$) is equal to the mean of the random effects at neighbouring locations, which can be understood as a structured spatial random effect. $v_i$ accounts for pure overdispersion or non-spatial heterogeneity capturing local anomalies that are completely independent of the surrounding geographic topology.
 
 Note that there are two identifiability issues with this model which have practical implications:
 
-a)  The variance parameters for the structured and unstructured components are not identifiable, meaning that it is not possible to determine how much of the variability in the data is due to spatially structured effects versus unstructured noise. This can lead to difficulties in interpreting the results and understanding the underlying spatial processes.
+a)  The structured and unstructured components may be weakly distinguished by the data, making their variance allocation sensitive to the priors.
 
-b)  The scaling of the spatially structured component is not identifiable, which means that the magnitude of the spatial effects cannot be directly compared across different datasets or models, that is, the respective precision parameters do not operate on the same marginal scale. Its precision depends entirely on the specific topological graph structure (i.e., the number of neighbours), making hyperprior selection mathematically obscure and preventing the transferability of priors across different spatial applications. (Rieble et al., 2016).
+b)  The structured component's marginal scale depends on the whole graph, so its precision is not directly comparable with the IID precision without scaling.
 
-Paper which uses a modification so that $u_i$ and $v_i$ are identifiable separately, is Duncan, White, and Mengersen (2017).
+See Duncan, White, and Mengersen (2017), as they examine the effect of weights-matrix specification on smoothing and inference; their study should not be read as guaranteeing separate identification of the two latent fields.
 
 ::: {.callout-note appearance="simple"}
-# Pay Attention EXPLAIN BETTER
+## Key Issue: Why BYM Identifiability Matters in Practice
+
+The BYM decomposition needs care when interpreting spatial and non-spatial variability:
+
+1.  **Hyperprior sensitivity**: Weakly distinguished components can yield prior-sensitive variance allocation.
+2.  **Graph-dependent scaling**: Conditional precision depends on the neighbour count, but marginal variance depends on the complete graph.
+3.  **Motivation for BYM2**: Scaling and a mixing parameter improve interpretation and prior specification without guaranteeing strong identification in every dataset (Riebler et al., 2016).
+:::
+
+The annotated BYM equation is therefore:
+
+$$
+\log(\theta_i) = 
+\overset{\color{#2b5c8f}{\scriptstyle\text{Baseline / Covariates}}}{
+  \bbox[#dfe7ee, 5px]{
+    \alpha + \mathbf{x}_i^\top \boldsymbol{\beta}
+  }}
++ 
+\overset{\color{#1b7837}{\scriptstyle\text{Structured Spatial (iCAR)}}}{
+  \bbox[#ddebe1, 5px]{
+    u_i
+  }}
++ 
+\overset{\color{#b2182b}{\scriptstyle\text{Unstructured Overdispersion}}}{
+  \bbox[#f4dddf, 5px]{
+    v_i
+  }}
+$$
+
+::: {.callout-note appearance="simple"}
+## Technical Note: Spatial Graph Validation
+
+Check graph symmetry, row ordering, connected components, and isolated areas before fitting. Disconnected ICAR graphs require component-specific constraints and scaling, with suitable treatment of singletons; they do not automatically require artificial links to the mainland. Use `spdep::n.comp.nb()` to identify components and document the chosen treatment. Any new link changes the spatial prior and needs a substantive justification (Riebler et al., 2016; Morris et al., 2019).
 :::
 
 ## Proper CAR model
 
-A proper CAR model addresses this by including an additional parameter $ρ$ which controls the overall level of spatial autocorrelation. The conditional distributions of the proper CAR are:
+A proper CAR model attempts to addresses the identifiability problem by including an additional parameter $ρ$ which controls the overall level of spatial autocorrelation. The conditional distributions of the proper CAR is: $$
+s_i \mid \mathbf{s}_{-i} \sim \mathcal{N}\left(
+\overset{\color{#762a83}{\scriptstyle\text{Autocorrelation Dampening}}}{
+  \bbox[#ebdfed, 5px]{
+    \frac{\rho}{\sum_j w_{ij}}
+  }}
+\sum_{j} w_{ij} s_j, \,
+\overset{\color{#1b7837}{\scriptstyle\text{Conditional Variance}}}{
+  \bbox[#ddebe1, 5px]{
+    \frac{\sigma_s^2}{\sum_j w_{ij}}
+  }}
+\right)
+$$ where $\rho$ is constraint to $−1<\rho<1$, ensuring the precision matrix is positive definite (and therefore the covariance matrix exists), and the joint distribution is proper.
 
-$$
-s_i \mid {s}_i \sim \mathcal{N}\left(\frac{\rho}{\sum_j{w_{ij}}}\sum_j{w_{ij}s_j}, \frac{\sigma_s^2}{\sum_j{w_{ij}}}\right)
-$$
+The proper CAR model is not as popular as the ICAR model because it has several drawbacks: it potentially limits the breadth of the posterior spatial pattern, and for there to be a reasonable amount of spatial association, $\rho$ likely needs to be close to 1 (Banerjee, Carlin, and Gelfand 2014). In which case, one might as well use the ICAR model, which is more parsimonious.
 
-where $\rho$ is constraint to $−1<\rho<1$, ensuring the precision matrix is positive definite (and therefore the covariance matrix exists), and the joint distribution is proper.
+## Leroux model {#sec-leroux}
 
-The proper CAR model is not as popular as the ICAR model because it has several drawbacks: it potentially limits the breadth of the posterior spatial pattern, and for there to be a reasonable amount of spatial association, $\rho$ likely needs to be close to 1 (Banerjee, Carlin, and Gelfand 2014). In which case, one might as well use the ICAR model, which is more parsimonious (fewer parameters).
-
-## Leroux model
-
-The formulation of the Leroux model by Leroux, Lei, and Breslow (2000) represents a significant methodological advancement in spatial epidemiology and econometrics because it mathematically resolves the severe limitations inherent to both the classical Besag-York-Mollié (BYM) convolution model and the proper Conditional Autoregressive (CAR) model (Riebler et al., 2016; Jahan et al. 2022).
+The Leroux model (Leroux, Lei, & Breslow, 2000) provides a single spatial effect that interpolates between independent and intrinsic CAR structures (Riebler et al., 2016; Cramb et al., 2020).
 
 The model formulates the precision matrix of this single effect as a weighted average of the ICAR precision matrix and an independent identity matrix, governed by a spatial dependence parameter $\rho$.
 
-Because the weighting occurs within the precision matrix itself, the additive decomposition of variance in the Leroux model happens conditionally (conditional on the effects in neighbouring areas), rather than marginally on the overall log-relative risk scale (Riebler et al., 2016).
+The weighting is a mixture of precision matrices, not an additive marginal variance decomposition; its parameter should not be read as the fraction of marginal variance explained by spatial structure (Riebler et al., 2016). Consequently, the true marginal variance under Leroux varies across individual nodes depending on local neighborhood graph topology.
 
 $$
-S_i \mid {S}_{\smallsetminus i} \sim \mathcal{N}\left(\frac{\rho \sum_j{w_{ij}s_j} + (1-\rho)\mu_0}{\rho \sum_j{w_{ij}}+1-\rho}, \frac{\sigma_s^2}{\rho \sum_j{w_{ij}}+1-\rho}\right)
+S_i \mid \mathbf{S}_{-i} \sim \mathcal{N}\left(
+\frac{
+  \overset{\color{#1b7837}{\scriptstyle\text{Structured Neighbour Pull}}}{
+    \bbox[#ddebe1, 5px]{
+      \rho \sum_{j} w_{ij} S_j
+    }}
+  + 
+  \overset{\color{#2b5c8f}{\scriptstyle\text{Global Mean Pull}}}{
+    \bbox[#dfe7ee, 5px]{
+      (1 - \rho) \mu_0
+    }}
+}{
+  \rho \sum_j w_{ij} + 1 - \rho
+}, \,
+\overset{\color{#762a83}{\scriptstyle\text{Convex Precision Mixture}}}{
+  \bbox[#ebdfed, 5px]{
+    \frac{\sigma_s^2}{\rho \sum_j w_{ij} + 1 - \rho}
+  }}
+\right)
 $$
 
-The parameter $\rho$ weights the type of smoothing: the correlated smoothing of the neighbouring random effects, compared to the uncorrelated smoothing towards a global mean $\mu_0$ (weighted by $(1−\rho$) (Lee and Mitchell, 2012). This means an additional overall intercept should not be included in the model, otherwise it will lead to an over-parameterised model and cause identifiability issues. Thus $S_i$ has a conditional expectation based on a weighted average of both the independent (unstructured) random effects and the spatially structured random effects.
+The parameter $\rho$ balances neighbour smoothing against shrinkage towards the global mean $\mu_0$.
+
+::: {.callout-note appearance="simple"}
+## Technical Note: Leroux Intercepts
+
+If both $\mu_0$ and a separate unrestricted intercept are estimated, they represent the same overall location. With zero-centred random effects, a regression intercept can instead be included (Leroux et al., 2000; Lee and Mitchell, 2012).
+
+Use one overall location parameter: either the random-effect mean $\mu_0$, or a regression intercept with centred effects. At the intrinsic endpoint $\rho=1$, impose the appropriate constraints for each connected graph component.
+:::
 
 Note that the Leroux model is a generalisation of the ICAR model and the independent model (i.e. a model without any structured spatial random effect). When $\rho$ is set to 1, the ICAR model is recovered. When $\rho$ is set to 0, the independent model is recovered. Thus the Leroux model attempts to find balance between these two models by estimating the value of $\rho$.
 
-One advantage of the Leroux model is that it avoids the identifiability issue since there is only one set of random effects, $S_i$. It also simplifies the difficulty in specifying hyperpriors (in the BYM model, the variance for $S_i$ is conditional on the neighbouring areas, while the variance for $v_i$ is marginal) (Riebler et al. 2016)
+The Leroux model uses a single random-effect field, avoiding the explicit two-field allocation of BYM. However, its scale still depends on the graph and on $\rho$ (Riebler et al., 2016).
+
+::: {.callout-note appearance="simple"}
+## Operational Note: Leroux in R-INLA
+
+R-INLA's `model = "besagproper2"` has precision $\tau[(1-\lambda)I+\lambda R]$, where $R$ is the Besag structure matrix, and therefore implements the Leroux form under matching graph conventions. Check constraints and hyperpriors when comparing implementations. `besagproper` is a different parameterisation, and BYM2 is a different prior; its mixing parameter is not interchangeable with Leroux's $\rho$. See the [official INLA model definition](https://www.inla.r-inla-download.org/r-inla.org/doc/latent/besagproper2.pdf).
+:::
 
 ## BYM2 model
 
-The BYM2 model, introduced by Simpson et al. (2017) and Riebler et al. (2016), is a reparameterisation of the BYM model that addresses the identifiability issues by , rather than relying on a single spatial effect to capture all noise, introduces a scaling parameter for the spatially structured component $u_i$, $u_*$ and a mixing parameter $\phi$ that controls the balance between the structured and unstructured components.
-
-Crucially, the BYM2 model mathematically scales the structured ICAR component so that its generalised marginal variance is approximately equal to one.
+The BYM2 model, discussed by Simpson et al. (2017) and Riebler et al. (2016), reparameterises BYM using an overall precision and a mixing parameter $\phi$. Its structured component $u_*$ is scaled so that the geometric mean of its constrained marginal variances is one.
 
 The model can be expressed as:
 
 $$
-b = \frac{1}{\sqrt{\tau_\beta}} \left( \sqrt{1 - \phi}\, v + \sqrt{\phi}\, u_* \right)
+b_i = 
+\overset{\color{#2b5c8f}{\scriptstyle\text{Overall Scale}}}{
+  \bbox[#dfe7ee, 5px]{
+    \frac{1}{\sqrt{\tau_\beta}}
+  }}
+\left(
+\overset{\color{#b2182b}{\scriptstyle\text{Unstructured Component}}}{
+    \bbox[#f4dddf, 5px]{
+      \sqrt{1 - \phi} \, v_i
+    }}
+  + 
+  \overset{\color{#1b7837}{\scriptstyle\text{Scaled Spatial Field}}}{
+    \bbox[#ddebe1, 5px]{
+      \sqrt{\phi} \, u_i^*
+    }}
+\right)
 $$
 
-where $v_i$ is the unstructured component, $s_i$ is the structured component, $\tau_\beta$ is a precision parameter, and $\phi$ is the mixing parameter that controls the balance between the two components. And b denotes the composite spatial random effect for a specific geographic area. Note that there is only one precision parameter $\tau_\beta$ for the composite spatial effect, which is a weighted average of the structured and unstructured components, with weights determined by $\phi$. When $\phi=0$, the model reduces to pure, unstructured regional overdispersion, when $\phi=1$, the model operates as a purely structured spatial field, driven entirely by neighbourhood clustering.
+Here $v_i\sim N(0,1)$ is independent of the scaled structured field $u_*$ representing localized, or region-specific heterogeneity. This geometric scaling ensures that $u_i^*$ contributes unit marginal variance regardless of node degree or overall map connectivity (Riebler et al. 2016). $\tau_\beta$ controls the overall scale (controlling overall random effect variance, completely unconfounded by spatial structure, see Riebler et al. \[2016\]), and $\phi\in[0,1]$ controls the mixture, representing the proportion of total variance explained by spatial clustering. At $\phi = 0$ the field is IID, collapsing the model to pure unstructured Gaussian overdispersion; at $\phi = 1$ it is purely structured, collapsing the model to a purely structured, scaled spatial autoregressive process, and at $0 < \phi < 1$ represents the exact proportion of total marginal random effect variance explained by spatial clustering.
 
-As such, the BYM2 model allows for separate estimation of the variance parameters for the structured and unstructured components, and it provides a more interpretable framework for understanding the spatial effects in the data.
+BYM2 makes prior specification and variance allocation more interpretable, although the data may still identify $\phi$ weakly.
 
-A critical methodological advantage of the BYM2 model over the Leroux model is its treatment of geometric scaling. Its precision parameter does not represent the true marginal precision, that is, it remains mathematically confounded with both the mixing parameter and the underlying graph structure (Riebler et al., 2016).
+For BYM2, the marginal variance at area $i$ is $\tau_\beta^{-1}[(1-\phi)+\phi\operatorname{Var}(u_i^*)]$. Thus scaling provides a comparable overall scale, but $\tau_\beta$ is not the exact marginal precision at every area and $\phi$ is not an exact area-specific variance fraction.
 
 The BYM2 model has the following limitations:
 
-a)  Loss of the sparse topological structure characteristic of standard CAR models and therefore practitioners must deploy mathematically complex augmented parameterisations to preserve sparsity (Riebler et al., 2016).
-b)  Model becomes structurally cumbersome when applied to spatial networks that are not fully connected. Drastically increasing the indexing and coding complexity necessary to specify the model correctly (Morris et al., 2019).
+a)  The composite field need not have a sparse marginal precision (which would involve computational complexity in high dimensions), although an augmented representation preserves sparse computation (Riebler et al., 2016).
+b)  Disconnected graphs require component-aware scaling and constraints, with appropriate handling of isolated areas (Morris et al., 2019).
+c)  When fixed regression covariates $\mathbf{X}$ exhibit spatial autocorrelation, adding the BYM2 spatial random field $\mathbf{b}$ into the linear predictor $\eta_i = \mathbf{x}_i^T \boldsymbol{\beta} + b_i$ induces collinearity between $\mathbf{X}$ and $\mathbf{u}^*$
 
-## Geostatistical Model
+::: {.callout-note appearance="simple"}
+## Operational Note: BYM2 Implementation in R-INLA
+
+For a scaled, centred BYM2 specification in `inla()`:
+
+1.  **`scale.model = TRUE`**: Scale the structured component for interpretable prior specification.
+2.  **`constr = TRUE`**: Apply the relevant centring constraints; verify component-specific handling for disconnected graphs.
+
+By decoupling total variance ($\tau_\beta$) from spatial proportion ($\phi$), BYM2 enables the specification of Penalized Complexity (PC) priors. These priors shrink $\phi$ toward $0$ (the simpler base model of pure unstructured overdispersion) unless the empirical data provides strong evidence of spatial clustering, managing hyperprior confounding and preventing overfitting.
+
+PC priors are specified as: `hyper = list(prec = list(prior = "pc.prec", param = c(u, alpha)), phi = list(prior = "pc", param = c(0.5, 0.5)))`, where `P(sigma > u) = alpha` shrinks toward zero variance (Simpson et al., 2017).
+:::
+
+## Geostatistical Models
 
 Conventional areal models, such as the Conditional Autoregressive (CAR) and Simultaneously Autoregressive (SAR) specifications, rely on discrete Markov Random Fields (MRFs) where spatial dependency is dictated by a sparse, binary adjacency matrix defined by shared geographic borders Duncan et al. (2024).
 
-In stark contrast, the geostatistical approach discards this discrete topological network, instead modelling the residual spatial structure as a continuous Gaussian process
+In stark contrast, the geostatistical approach discards this discrete topological network, instead modelling the residual spatial structure as a continuous Gaussian process. These models treat spatial processes as continuous point-referenced fields $S(\mathbf{s})$ indexed over coordinates $\mathbf{s} \in \mathbb{R}^2$. They incorporate areal data either by reducing polygons to **spatial centroid coordinates** (Louzada et al., 2021) or by integrating the continuous Gaussian process across each polygon surface using a **constrained planar triangulation mesh** (see Chapter 11, Moraga, P., \[2023\]).
 
-The Geostatistical model proposed by Clements et al. (2006) models the spatial structure as a Gaussian process:
+Clements et al. (2009) provide an application, a generic Gaussian-response formulation is:
+
+$$
+Y(s) = 
+\overset{\color{#2b5c8f}{\scriptstyle\text{Fixed Trend}}}{
+  \bbox[#dfe7ee, 5px]{
+    X(s)^\top \boldsymbol{\beta}
+  }}
++ 
+\overset{\color{#1b7837}{\scriptstyle\text{Continuous Gaussian Process}}}{
+  \bbox[#ddebe1, 5px]{
+    S(s) \sim \mathcal{GP}(0, \Sigma_{\text{Matérn}})
+  }}
++ 
+\overset{\color{#b2182b}{\scriptstyle\text{Measurement Error}}}{
+  \bbox[#f4dddf, 5px]{
+    \varepsilon(s) \sim \mathcal{N}(0, \tau^2)
+  }}
+$$
+
+The Matérn covariance function (smooth covariance kernel) $\Sigma_{\text{Matérn}}(h) = \frac{\sigma^2}{2^{\nu - 1} \Gamma(\nu)} \left(\frac{\sqrt{2\nu} h}{\kappa}\right)^\nu K_\nu\left(\frac{\sqrt{2\nu} h}{\kappa}\right)$ controls the smoothness ($\nu$) and range ($\kappa$) of spatial correlation, where $h$ is the Euclidean distance between locations (counts are assumed to be in the centroid of an area) and $K_\nu$ is the modified Bessel function of the second kind (which in practical terms, it is used to turn distances between locations into covariance values).
+
+Notwithstanding, the "Big $N$" covariance inversion problem ($\mathcal{O}(N^3)$) makes naive implementation infeasible for datasets exceeding several thousand spatial units. Approximation strategies are required.
+
+::: {.callout-note appearance="simple"}
+## Operational Note: SPDE Approximation in R-INLA
+
+R-INLA implements Matérn fields through the SPDE approach (Lindgren, Rue, & Lindström, 2011), using a finite-element mesh and sparse precision matrix. For suitable two-dimensional meshes, sparse factorisation can scale approximately as $\mathcal{O}(m^{3/2})$, where $m$ is the number of mesh nodes, not the number of observations. Cost also depends on mesh structure and inference settings. Check mesh sensitivity: refinement is useful when it changes relevant posterior quantities. `inlabru` provides higher-level tools for spatial model fitting.
+:::
 
 ## Global Spline Models
 
+Bayesian P-spline models (Lang & Brezger, 2004) estimate smooth spatial surfaces using tensor-product basis expansions with penalised random coefficients. The spatial trend $f(s_1, s_2)$ is decomposed as:
+
+$$
+f(s_1, s_2) = 
+\overset{\color{#1b7837}{\scriptstyle\text{Tensor-Product Basis Expansion}}}{
+  \bbox[#ddebe1, 5px]{
+    \sum_{j=1}^{K_1} \sum_{k=1}^{K_2} \beta_{jk} B_{1j}(s_1) B_{2k}(s_2)
+  }}, \quad
+\pi(\boldsymbol{\beta}\mid\lambda_1,\lambda_2)
+\propto \exp\left\{-\tfrac12\boldsymbol{\beta}^{\top}
+\mathbf{Q}_{\text{spline}}(\lambda_1,\lambda_2)\boldsymbol{\beta}\right\}
+$$
+
+Here $B_{1j}$ and $B_{2k}$ are B-spline basis functions (the map is divided by a grid of smooth, overlapping "hills", aka B-spline functions, along latitude and longitude), coefficient weights ($\beta_{jk}$), control "the height of each hill". Summing these "weighted hills" creates a continuous 2D surface, and $\mathbf{Q}_{\text{spline}}$ penalises coefficient differences to prevent the surface from becoming jagged or overfitting noise (neighbouring weights are constrained so they cannot change too abruptly). The penalty can be singular: specify constraints and treat its unpenalised null-space components separately, rather than assuming an ordinary matrix inverse exists (Lang & Brezger, 2004).
+
+Fits flexible, semi-parametric trend estimation that does not require strict parametric assumptions on distance correlation decay. Avoids assuming a strict, parametric spatial decay kernel (such as Matérn or Exponential correlation functions. The model can capture complex spatial surfaces including gradients and curvature, and the penalty par ameters $\lambda_1, \lambda_2$ control the balance of model fit against surface wiggliness.
+
+Nevertheless, the model is sensitive to basis "hills" placement and boundary edge effects, when applied to irregular administrative polygons (e.g., census tracts with varying areas and non-uniform centroid spacing), tensor products fail to respect irregular boundary geometries and spatial change-of-support (Cramb et al., 2017). The model inherently enforces global smoothness, which obscures localised spatial cliffs. Tensor-product bases with many "hills" can become computationally expensive for high-dimensional spatial domains.
+
 ## CAR Dissimilarity Model
+
+Rather than enforcing isotropic, global spatial smoothing across administrative borders, a continuous dissimilarity-weighted CAR specification adjusts spatial borrowing locally using a symmetric non-negative weight matrix (Duncan et al., 2017). Unlike the binary edge-severing model proposed by Lee and Mitchell (2012), as described below in **Covariate-Driven Dissimilarity Models**. The continuous variant modulates borrowing strength as a smooth function of observed dissimilarity:
+
+$$w_{ij} = \overset{\color{#d95f02}{\scriptstyle\text{Covariate Dissimilarity Penalty}}}{\bbox[#f8e2d1, 5px]{\exp\left( - \alpha \, \frac{|z_i - z_j|}{\sigma_z} \right)}} \cdot \overset{\color{#1b7837}{\scriptstyle\text{Contiguity Base}}}{\bbox[#ddebe1, 5px]{\mathbb{I}(i \sim j)}}$$
+
+where $\mathbb{I}(i \sim j)$ is the binary indicator of geographic adjacency, $|z_i - z_j|$ is the absolute difference in a boundary-driving covariate $z$ standardized by its scale $\sigma_z$ , and $\alpha \ge 0$ is the decay parameter.
+
+Setting $\alpha = 0$ recovers standard binary contiguity ($w_{ij} = 1$) \[4\]. For any finite $\alpha$, weights on adjacent edges remain strictly positive ($w_{ij}$), smoothly dampening borrowing across dissimilar regions without breaking topological graph connectivity. These weights parameterize a proper Leroux precision matrix $Q = \tau \left[(1 - \rho)I + \rho(D_W - W)\right]$, where $0 \le \rho$ and $D_W = \operatorname{diag}\left(\sum_j w_{ij}\right)$ (Lee, CARBayes - version 6.1.1 documentation, 2024).
+
+::: {.callout-note appearance="simple"}
+## Operational Note: continuous downweighting or adaptive smoothing vs. discrete boundary detection
+
+1.  **Scale Standardization:** Dissimilarities $|z_i - z_j|$ must be standardized (e.g., by their sample standard deviation or median ($Z_{0.5}$) so that $\alpha$ remains scale-invariant across different covariates (Duncan et al., 2017; Aiello and Banerjee,2026).
+
+2.  **Likelihood Feedback:** When $\alpha$ is estimated within a Bayesian hierarchy, the posterior is informed jointly by covariate differences and response likelihood jumps (Gianella et al., 2026;Aiello and Banerjee,2026). To prevent non-identifiability between global correlation $\rho$ and local decay $\alpha$, $\rho$ is typically fixed close to unity ($\rho = 0.99$) (Duncan et al., 2017;Lee, CARBayes - version 6.1.1 documentation, 2024; Aiello and Banerjee,2026).
+
+3.  **Continuous Downweighting or Adaptive Smoothing vs. Binary Boundaries:** Continuous downweighting performs *localized adaptive smoothing*, whereas detecting a *discrete boundary event* requires an explicit thresholding rule (Gianella et al., 2026; Lee, CARBayes - version 6.1.1 documentation, 2024). In Lee and Mitchell (2012), edges are strictly severed ($w_{ij} = 0$) when dissimilarity penalties cross a deterministic threshold ($\alpha |z_i - z_j| > \ln 2$) (Gianella et al., 2026; Aiello and Banerjee,2026). Under the continuous specification, defining a "boundary" necessitates an explicit post-hoc decision criterion on $w_{ij}$ ((e.g., classifying borders where $w_{ij} < 0.10$) or its posterior exceedance probabilities $P(w_{ij} < c \mid Y)$ , with \$\$c\$\$ being a bespoke threshold (Gianella et al.,2026; Lu et al., 2007).
+:::
+
+These weights can be used in a proper precision such as $Q=\tau[(1-\rho)I+\rho(D_W-W)]$, with $0\leq\rho<1$ and $D_W=\operatorname{diag}(\sum_jw_{ij})$. This allows the strength of borrowing to vary with an observed dissimilarity while retaining the original adjacency pattern. Note that this is the precision matrix of a \@sec-leroux incorporating the continuously modified spatial weights matrix \$W\$. By embedding $W$ inside the diagonal degree matrix $D_W$ and off-diagonal elements, spatial borrowing of strength is deminished across dissimilar borders while maintaining a well-defined joint Gaussian Markov Random Field (GMRF).
+
+Notwithstanding, results depend on the chosen dissimilarity and its scaling. If $\alpha$ is estimated, and as the exponent $\alpha |z_i - z_j|$ is scale-dependent, its posterior distribution is informed by how well the downweighted spatial field fits the response data $Y$ (the observation likelihood) (Gianella et al.,2026). Generating an inference trade-off: if the response $Y$ exhibits a sharp spatial jump across a border where $z$ also differs, the likelihood encourages larger values of $\alpha$. However, if $\alpha$ is estimated jointly with the global spatial dependence parameter $\rho$ and marginal precision $\tau$, identifiability bottlenecks can arise unless $\rho$ is fixed close to 1 (e.g., $\rho = 0.99$ (as recommended by Lee & Mitchell, 2012).
 
 ## Locally Adaptive Model
 
+While CAR dissimilarity models (Lee & Mitchell, 2012) achieve localized smoothing by directly modifying the spatial adjacency graph $\mathbf{W}$, an alternative paradigm captures spatial step changes through a node-level mixture structure (Lee & Sarran, 2015). Rather than estimating a free binary indicator or dissimilarity penalty for every graph edge, this locally adaptive specification maintains a fixed, global spatial contiguity matrix ($\mathbf{W}$) for a smooth Intrinsic CAR (ICAR) component, while overlaying a discrete, piecewise-constant intercept process ($\lambda\_{Z_i}$) to absorb abrupt local risk jumps:
+
+$$ \log(\theta_i) = \mathbf{x}_i^\top \boldsymbol{\beta} + u_i + \lambda_{Z_i}, \qquad Z\_i \in \{1, \ldots, G\} 
+$$
+
+where $u_i \sim \operatorname{ICAR}(\sigma_u^2,\mathbf{W})$, and the group intercept levels are strictly ordered:
+
+$$\lambda_1 < \lambda_2 < \cdots < \lambda_G $$
+
+to eliminate label-switching non-identifiability. To identify the baseline mean structure, the overall covariate vector $\mathbf{x}_i^\top \boldsymbol{\beta}$ omits a global intercept $\beta_0$, or a sum-to-zero constraint is applied to $u_i$.
+
+**Penalized Allocation Prior:** Group assignments $Z_i$ are governed by a quadratic penalty prior centred at the midpoint $G^* = (G + 1)/2$:
+
+$$
+f(Z_i)
+=
+\frac{\exp\left[-\delta (Z_i - G^*)^2\right]}
+{\sum_{r=1}^{G} \exp\left[-\delta (r - G^*)^2\right]},
+\qquad
+\delta \sim \operatorname{Uniform}(1, M).
+$$
+
+Setting $G$ to a small odd integer (e.g., $G = 3$ or $5$) shrinks area allocations toward the central baseline $G^*$, allowing extreme groups to remain empty if localized step changes are unsupported by the data (Lee, CARBayes - version 6.1.1 documentation, 2024).
+
+**Boundary Uncertainty Quantification:** Neighbouring areas $i\sim j$ sharing the same group allocation ($Z_i = Z_j$) undergo standard ICAR spatial smoothing. A spatial discontinuity occurs where neighbouring allocations diverge ($Z_i \neq Z_j$), with edge-specific posterior boundary evidence quantified directly as:
+
+\$\$
+
+{P}(Z_i \neq Z_j \mid \mathbf{Y})
+
+\$\$
+
+Nevertheless, the model introduces four primary methodological trade-offs and inferential vulnerabilities that require careful calibration:
+
+**Sensitivity to Hyperparameter** $G$ and Allocation Shrinkage: The pre-specified maximum number of groups $G$ (typically an odd integer, $G \in \{3, 5, 7\}$) imposes a rigid upper bound on the number of achievable risk plateaus $\lambda_1 < \dots < \lambda_G$. The penalty parameter $\delta \sim \operatorname{Uniform}(1, M)$ regulates the strength of shrinkage toward the central baseline; overly aggressive shrinkage suppresses subtle, true local step-changes, whereas weak shrinkage allows random overdispersion to falsely trigger extreme group allocations ($\lambda_1$ or $\lambda_G$).
+
+**Unconstrained Spatial Allocations and Spurious Singletons:** Group indicators $Z_i$ are assigned at the node level without an explicit spatial contiguity prior. Consequently, in areas with sparse counts or high localized variance, single isolated polygons can be assigned to distinct groups. This generates spurious "island" boundaries around individual administrative units rather than identifying contiguous, linear frontiers.
+
+**Probabilistic Boundary Summaries and Threshold Dependency:** Boundary detection under this framework is fundamentally probabilistic. Converting these continuous posterior exceedance probabilities into binary spatial boundary maps requires establishing an arbitrary post-hoc decision rule (e.g., classifying a boundary where $\operatorname{P}(Z_i \neq Z_j \mid \mathbf{y}) > 0.50$), introducing classification uncertainty that must be explicitly reported (Lee, 2013).
+
+**MCMC Mixing Bottlenecks and Computational Scaling:** Jointly sampling discrete categorical allocations $Z_i \in \{1, \ldots, G\}$ alongside continuous Gaussian random effects $u_i$ induces high autocorrelation in MCMC chains. For large spatial lattices ($n > 3,000$), sampling efficiency in CARBayes::S.CARlocalised() degrades, requiring extended burn-in periods and heavy thinning to achieve chain convergence—a computational bottleneck that cannot be circumvented via single-fit R-INLA approximations (Lee & Sarran, 2015; Gianella et al., 2023).
+
+::: callout-warning
+## Implementation: Discrete Group Allocations
+
+The ICAR-plus-intercept-mixture model is implemented via MCMC in `CARBayes::S.CARlocalised()`. Because the joint hierarchy requires sampling discrete categorical allocations $Z_i \in \{1, \ldots, G\}$, a single `R-INLA` fit cannot natively model this discrete latent structure. This discrete MCMC allocation scheme is distinct from iterative pseudo-INLA routines (Dean et al., 2019; Dong et al., 2020), which update adjacency matrices $\mathbf{W}$ deterministically across conditional estimation steps. See the [CARBayes manual](https://cran.r-project.org/web/packages/CARBayes/CARBayes.pdf).
+:::
+
 ## Localised Autocorrelation Model
+
+To circumvent the severe MCMC mixing bottlenecks and high computational costs associated with sampling discrete latent variables, whether node allocations $Z_i$ (Lee & Sarran, 2015) or edge indicators $w_{ij}$ (Lee & Mitchell, 2012), Lee and Mitchell (2013) proposed an algorithmic alternative: Localised Autocorrelation Modelling via iterative conditional INLA fits. Rather than estimating group-specific autocorrelation parameters or sampling discrete graph structures within a unified MCMC chain, this framework iteratively updates the spatial adjacency graph $\mathbf{W}$ deterministically based on marginal posterior distribution overlaps:
+
+$$
+\pi\left(\boldsymbol{\Theta} \mid \mathbf{Y}, \mathbf{W}^{(k)}\right) \quad \longrightarrow \quad \mathbf{W}^{(k+1)}
+$$ It does bye following the following agorithmic mechanism edge selection rule:
+
+1.  **Conditional Fitting:** Given the current binary adjacency matrix $\mathbf{W}^{(k)}$ (initialized at standard geographic contiguity $\mathbf{W}^{(0)}$), a spatial GLMM is fitted using Integrated Nested Laplace Approximation (`R-INLA`) to obtain marginal posterior distributions for spatial random effects $u_i$ and $u_j$.
+
+2.  **Deterministic Edge Pruning:** For each geographically adjacent pair $(i \sim j)$, the edge connection is evaluated based on the overlap of their marginal $95\%$ credible intervals:
+
+    - **Retain Edge (**$w_{ij}^{(k+1)} = 1$): If the $95\%$ marginal credible intervals of $u_i$ and $u_j$ overlap.
+    - **Sever Edge (**$w_{ij}^{(k+1)} = 0$): If the $95\%$ marginal credible intervals do not overlap.
+
+3.  **Convergence and Cycle Selection:** The process iterates until the adjacency graph stabilizes ($\mathbf{W}^{(k+1)} = \mathbf{W}^{(k)}$) or enters a repeating sequence of cycling graphs ($\mathbf{W}^{(A)} \to \mathbf{W}^{(B)} \to \dots \to \mathbf{W}^{(A)}$). In cycling regimes, the optimal graph topology $\mathbf{W}^*$ is selected using a residual spatial autocorrelation criterion (minimizing Moran's $I$ on model residuals).
+
+This enables to detect local breaks in spatial smoothing across complex administrative maps without requiring discrete-mixture MCMC sampling, leveraging the computational speed of `R-INLA`.
+
+Nevertheless, several issues arise:
+
+**Selection Procedure vs. Joint Posterior Inference:** Graph updating is a deterministic model selection heuristic rather than joint Bayesian posterior sampling over the graph space $\pi(\mathbf{W}, \boldsymbol{\Theta} \mid \mathbf{Y})$.
+
+**Conditional Variance Underestimation:** Final parameter inference and uncertainty quantification are evaluated strictly conditional on the single selected graph $\mathbf{W}^*$, ignoring topological selection uncertainty and artificially narrowing posterior credible intervals.
+
+**Informal Boundary Criterion:** Marginal credible interval overlap serves as an algorithmic stopping rule, not a formal posterior boundary probability $\operatorname{P}(w_{ij} = 0 \mid \mathbf{Y})$. Evaluating overlap across dependent marginal posteriors is an informal hypothesis test that lacks decision-theoretic risk control.
+
+**Subgraph Partitioning Constraints:** As edges are iteratively severed, the graph $\mathbf{W}^{(k)}$ can decompose into disconnected components or singletons. Each INLA step must dynamically enforce component-aware sum-to-zero constraints $\sum_{i \in c} u_i = 0$ (Morris et al., 2019) to maintain parameter identifiability.
+
+::: callout-note
+## Implementation: Alternating INLA Fits and Graph Updates
+
+The Lee and Mitchell (2013) algorithm is implemented by alternating `R-INLA` conditional model estimations with graph modification scripts. The final parameter uncertainty is evaluated conditionally on the selected graph topology $\mathbf{W}^*$). Dean et al. (2019) applied this framework to quantify residential segregation and social frontiers, using supplementary graph-pruning criteria to isolate structural urban ruptures.
+:::
 
 ## Leroux Scale Mixture Model
 
-# Lets Go Kinky: The Conceptual Evolution of Wombling
+Rather than forcing discrete structural breaks in spatial smoothing by algorithmically severing graph edges $w_{ij}$ (Lee & Mitchell, 2013), an alternative strategy robustifies the underlying Gaussian spatial process against localized anomalies, spatial outliers, and abrupt step-changes using continuous scale mixtures (Congdon, 2017). By introducing node-specific variance inflation factors (area-specific scale mixture weights) $\omega_i$, this framework preserves the original topological contiguity graph $\mathbf{W}$ while preventing extreme local observations from distorting spatial predictions in adjacent areas.
 
-The term wombling finds its origins in the seminal work of William H. Womble in 1951, who pioneered the detection of "discontinuities" or "edges" in biological data (Liang et al., 2009). Originally, the field was categorized alongside edge detection in image analysis and barrier analysis in landscape topography (Fitzpatrick et al., 2010). However, unlike image analysis, where edges often represent discrete breaks or "cliffs," wombling boundaries typically capture rapid surface change within a continuous or quasi-continuous spatial field (Banerjee, 2010: In Handbook of Spatial Statistics). For an extensive treatment of the method see Logan et al. (2011) and Spielman & Logan (2013).
+Congdon (2017) proposed a robustification of the Leroux CAR model by incorporating area-specific heavy-tailed scale mixture weights $\omega_i > 0$ directly into the conditional precision structure:
 
-In modern spatial statistics, boundary analysis is distinct from cluster analysis. While the latter focuses on classifying regions into homogeneous groups, boundary analysis prioritizes the transition itself, **the "line" or "curve" where the spatial gradient is steepest**, that is, finding "kinks" in a spatial surface rather than "clumps" of similar values. 
+$$
+\operatorname{Var}(S_i \mid \mathbf{S}_{-i}, \boldsymbol{\omega})
+=
+\frac{\sigma_s^2}{
+  \overset{\color{#b2182b}{\scriptstyle\text{Heavy-Tailed Scale Weight}}}{
+    \bbox[#f4dddf,5px]{\omega_i}
+  }
+  \cdot
+  \overset{\color{#762a83}{\scriptstyle\text{Leroux Precision Balance}}}{
+    \bbox[#ebdfed,5px]{(1-\rho+\rho d_i)}
+  }
+}
+$$
 
-> The underlying scientific interest lies in determining what distinguishes the areas on either side of a boundary rather than focusing on the internal characteristics of a specific cluster (Lu and Carlin, 2005).
+where $d_i = \sum_j w_{ij}$ represents the node degree.
+
+Assigning independent Gamma hyperpriors to the scale weights,
+
+$$
+\omega_i \sim \operatorname{Gamma}\!\left(\frac{\nu}{2}, \frac{\nu}{2}\right),
+$$
+
+using the shape-rate parameterization with $\operatorname{E}(\omega_i)=1$, yields a conditionally Gaussian, marginally heavy-tailed Student-$t$ process.
+
+The corresponding full conditional expectation is given by:
+
+$$
+\operatorname{E}(S_i \mid \mathbf{S}_{-i}, \boldsymbol{\omega})=
+\frac{\rho \sum_{j} w_{ij}\omega_j S_j}
+     {1-\rho+\rho d_i}.
+$$
+
+This setting allows:
+
+**Outlier Accommodation:** A small scale weight $\omega_i \to 0$ inflates the conditional variance $\operatorname{Var}(S_i \mid \mathbf{S}_{-i})$, allowing localized spatial anomalies ("outliers" or steep local jumps) to absorb residual variance without pulling neighbouring predictions $S_j$ away from their spatial trend.
+
+**Limiting Student-**$t$ Case: Setting the spatial dependency parameter $\rho = 0$ collapses the spatial structure to an independent Student-$t$ error process with $\nu$ degrees of freedom.
+
+Nevertheless, full conditional distributions do not automatically guarantee a valid joint multivariate Gaussian distribution
+
+$$
+\mathcal{N}\!\left(\mathbf{0},\mathbf{Q}(\boldsymbol{\omega})^{-1}\right).
+$$ For the specification to be proper, the implied symmetric joint precision matrix $\mathbf{Q}(\boldsymbol{\omega})$ must have diagonal and off-diagonal elements defined as: $$
+\begin{aligned}
+Q_{ii}
+&=
+\frac{\omega_i(1-\rho+\rho d_i)} {\sigma_s^2},\\[1em]
+Q_{ij} 
+&=
+-\frac{\rho\,w_{ij}\,\omega_i\omega_j} {\sigma_s^2},
+\qquad i \neq j
+\end{aligned}
+$$ Because symmetry ($Q_{ij}=Q_{ji}$) is a necessary but insufficient condition for joint propriety, positive definiteness ($\mathbf{Q}(\boldsymbol{\omega}) \succ 0$) must be formally verified. By [Gerschgorin's Circle Theorem](https://en.wikipedia.org/wiki/Gershgorin_circle_theorem), strict diagonal dominance holds for all $\rho \in [0,1)$ provided $\omega_i > 0$, guaranteeing a non-singular, proper joint GMRF prior.
+
+::: callout-warning
+**Implementation: Scale Mixtures & Latent Dimensions** Model estimation is implemented via MCMC algorithms. Although the random effects $\mathbf{S}$ are conditionally Gaussian given the scale vector $\boldsymbol{\omega}$, estimating $N$ unknown local scale parameters $(\omega_1,\ldots,\omega_N)$ introduces a high-dimensional non-Gaussian hyperparameter space. Consequently, this model cannot be fitted in a standard single-pass R-INLA model without custom latent C-code extensions or MCMC/Laplace hybrid samplers.
+:::
+
+# Lets Go $\textcolor{red}{\text{Kinky}}$: The Conceptual Evolution of Wombling
+
+Wombling originates in Womble's (1951) study of biological differentiation. Boundary analysis includes both abrupt contrasts between areal units and rapid changes in continuous surfaces (Fitzpatrick et al., 2010; Banerjee & Gelfand, 2006). Related approaches to identifying and bounding social neighbourhoods are discussed by Logan et al. (2011) and Spielman & Logan (2013).
+
+In modern spatial statistics, boundary analysis is distinct from cluster analysis. While the latter focuses on classifying regions into homogeneous groups, boundary analysis prioritizes the transition itself, **the "line" or "curve" where the spatial gradient is steepest**, that is, finding "kinks" in a spatial surface rather than "clumps" of similar values.
+
+Areal boundary analysis focuses on contrasts between neighbouring areas, rather than only on similarity within clusters (Lu and Carlin, 2005).
 
 These models are extensively used in public health, to identify areas where disease patterns change abruptly (Jacquez, 2010) and ecology to detect ecotones, which are zones of rapid change in species composition (Dale & Fortin, 2014).
 
 ## Paradigms of Boundary Elements
 
-This section is based on [this website](https://www.passagesoftware.net/webhelp/Wombling_Analysis.htm)
+### The Curvilinear Boundary Fallacy (CBF)
+
+Curvilinear Boundary Fallacy (CBF) concerns transferring boundary conclusions between spatial supports (Qu, Bradley, & Niu, 2021). For an area average $\bar Y_A$, its variance is
+
+$$
+\operatorname{Var}(\bar Y_A)=\frac{1}{|A|^2}\int_A\int_A C(s,t)\,ds\,dt,
+$$
+
+which depends on covariance, polygon size, and shape; it is not universally proportional to $1/|A|$. Areal and continuous boundary targets therefore need an explicit change-of-support model rather than treating centroid derivatives as equivalent to contrasts between areal averages.
+
+The following section is based on [this website](https://www.passagesoftware.net/webhelp/Wombling_Analysis.htm)
 
 Traditional boundary detection is often bifurcated into categorical and continuous methods, depending on the spatial configuration and the data structure under investigation.
 
 | Wombling Category | Data Structure | Elemental Definition | Quantitative Metric |
-|------------------|------------------|------------------|-------------------|
+|------------------|------------------|------------------|------------------|
 | Categorical | Surface or Scattered | Line segments or tessellation edges | Inter-point distance or dissimilarity |
 | Continuous | Grid or Triangulated | Centroids of geometric units | First partial derivatives (gradients) |
 
@@ -582,56 +911,387 @@ Categorical wombling, sometimes referred to as two-point wombling, identifies bo
 
 Continuous wombling identifies boundary elements at the centroids of sets of more than two data points—such as the corners of four cells in a grid or the centroids of triangles in a Delaunay triangulation. This method utilizes the values of surrounding points to estimate the magnitude and direction of change as the first partial derivative of the variable in the x and y directions.This gradient-based approach allows for the connection of adjacent boundary elements into "sub boundaries" based on criteria such as the top percentile of change magnitude and the angular consistency of the gradient vectors (Banerjee and Gelfand, 2006).
 
-## Foundational Univariate Areal Wombling
-(Lu and Carlin, 2005)
+## Foundational Univariate Areal Wombling (Lu and Carlin, 2005)
 
-## Stochastic Univariate Areal Wombling 
-(Lu et al., 2007)
+Lu and Carlin (2005) develop Bayesian areal boundary analysis. For a chosen latent relative-risk target $\theta_i$, adjacent-area contrasts can be summarised by posterior differences and exceedance probabilities:
 
-## Covariate-Driven Dissimilarity Models 
-(Lee and Mitchell, 2012)
+$$
+\Delta_{ij}^{\text{latent}} = 
+\overset{\color{#1b7837}{\scriptstyle\text{Latent Risk Difference}}}{
+  \bbox[#ddebe1, 5px]{
+    |\theta_i - \theta_j|
+  }}
+\quad \longrightarrow \quad
+\mathbb{E}[\Delta_{ij} \mid \mathbf{Y}], \quad \mathbb{P}(\Delta_{ij} > c \mid \mathbf{Y})
+$$
+
+*What it adds*: Posterior contrasts propagate uncertainty in the chosen latent target. Specify whether the boundary concerns total risk, log-risk, or a residual effect; these answer different questions. A removed graph edge is also distinct from a substantively large risk contrast.
+
+*Concerns*: Global smoothing can attenuate sharp contrasts. Choose the practical threshold $c$ and posterior decision threshold explicitly, and consider multiplicity and false-positive costs across edges. Assess boundary recovery as well as predictive fit (Lu & Carlin, 2005; Gao et al., 2023).
+
+## Stochastic Univariate Areal Wombling (Lu et al., 2007)
+
+Lu et al. (2007) extended the foundational framework by treating adjacency weights themselves as latent random variables, estimated jointly with the spatial field:
+
+$$
+w_{ij} \sim \text{Bernoulli}(p_{ij}), \quad 
+\text{logit}(p_{ij}) = 
+\overset{\color{#2b5c8f}{\scriptstyle\text{Distance / Barrier Logit}}}{
+  \bbox[#dfe7ee, 5px]{
+    \gamma_0 + \gamma_1 d_{ij}
+  }}
+$$
+
+*What it adds*: By formulating edge weights as latent Bernoulli random variables informed by physical or social distance $d_{ij}$, the model simultaneously estimates the spatial field and the adjacency structure. The posterior $\mathbb{P}(w_{ij} = 0 \mid \mathbf{Y})$ directly quantifies boundary probability for each edge.
+
+*Concerns*: The number of latent binary variables equals the number of edges in the adjacency graph, creating a high-dimensional discrete sampling problem.
+
+::: callout-warning
+## ⚠ R-INLA Cannot Fit This Model
+
+Bernoulli-distributed edge weights $w_{ij} \sim \text{Bernoulli}(p_{ij})$ are discrete latent variables that cannot be handled by INLA's Laplace approximation. Stochastic wombling models require MCMC, originally implemented in WinBUGS/OpenBUGS (Lu et al., 2007).
+:::
+
+## Covariate-Driven Dissimilarity Models (Lee and Mitchell, 2012)
+
+Lee and Mitchell (2012) use binary adjacency determined by covariate dissimilarity. Unlike the continuous weights in **CAR Dissimilarity Model**, their rule is
+
+$$
+w_{ij}(\boldsymbol{\alpha})=
+\mathbb{I}(i\sim j)\,
+\mathbb{I}\!\left\{\exp\!\left(-\sum_{k=1}^{q}\alpha_kz_{ijk}\right)\geq0.5\right\},
+\qquad \alpha_k\geq0,
+$$
+
+where $z_{ijk}$ are standardised non-negative dissimilarities. The original model fixes the global smoothing parameter near one ($\rho=0.99$), so local breaks are represented through $W(\boldsymbol{\alpha})$.
+
+*What it adds in boundary context*: Produces explicit edge removal through a parsimonious set of dissimilarity parameters. Their posterior distribution is informed by the response likelihood.
+
+*Concerns*: Available dissimilarities constrain which patterns can be detected. Continuous downweighting and binary boundary selection should not be treated as the same model.
 
 ## Multivariate Boundary Detection
 
-### Site-Edge Shared (SESHARED) model 
-(Ma and Carlin, 2007)
+### Site-Edge Shared (SESHARED) model (Ma and Carlin, 2007)
 
-### Multivariate Areally-Referenced Dirichlet Process (MARDP) model 
-(Ma and Carlin, 2009)
+Ma and Carlin (2007) extend areal wombling to multiple outcomes using multivariate spatial and shared-component models, including random neighbourhood structures. Their analysis distinguishes composite boundaries from disease-specific boundaries; a shared latent component does not imply that every outcome has the same boundary.
 
-## Graph-Based and Spatio-Temporal Optimisation
-(Lee et al., 2021)
+*What it adds*: Accounts for dependence across both areas and outcomes, allowing shared and outcome-specific boundary patterns to be investigated.
 
+### Multivariate Areally-Referenced Dirichlet Process (MARDP) model (Gao, Banerjee, and Ritz, 2023)
+
+Gao, Banerjee, and Ritz (2023) formulate a multivariate areal Dirichlet process (MARDP) for difference-boundary detection. Its discrete distribution allows positive posterior probability that neighbouring latent effects are equal, so equality and difference can be assessed directly.
+
+*What it adds*: Boundary decisions are framed as Bayesian multiple comparisons across outcomes and neighbouring areas. Shared areas do not by themselves guarantee contiguous geographic clusters.
+
+::: callout-warning
+## Implementation: Multivariate Boundary Models
+
+Models with discrete allocations or unknown graph edges generally require specialised computation. Gao et al. (2023) use MCMC for MARDP; a standard single INLA fit does not integrate these allocations. The precise computational requirements depend on the chosen multivariate model.
+:::
+
+## Intrinsic Response-Driven Boundary Models
+
+Recent Bayesian nonparametric and amortized approaches address different boundary targets. Amortized approaches are a special case of Simulation-based inference, a term for methods that allow inferences for models whose likelihoods are not analytically tractable (Radev et al., 2020; Radev, Schmitt, Schumacher, et al., 2023). In short, Amortized Bayesian Inference (ABI) relies on generative neural networks. Generative neural networks are deep learning architectures that specialize in generating arbitrary probability distributions. In ABI, the aim is to generate the posterior distributions of the parameters given data (Kucharský, 2025). These networks must be trained in order to approximate the posterior distribution. The following references are preprints.
+
+1.  **Spatial Mixture Models (SPMIX)** (Gianella, Beraha, & Guglielmi, 2026): Use multiple observations per area to detect differences between area-specific densities without requiring external dissimilarity covariates. This sampling setting differs from one aggregate count per area.
+
+2.  **Amortized Neural Inference (ABI-DAGAR)** (Aiello & Banerjee, 2026): Combines a DAGAR prior with a covariate-driven boundary rule and a neural approximation to posterior inference. Calibration, training cost, and performance on new graph structures must be assessed; rapid inference after training does not imply exact uncertainty or constant cost in graph size.
+
+## Graph-Based and Spatio-Temporal Optimisation (Lee, Rushworth, and Napier, 2018)
+
+`CARBayesST` provides spatio-temporal models with CAR-based spatial structure. In `ST.CARlocalised()`, an autoregressive spatio-temporal effect is combined with a piecewise constant intercept process, allowing local jumps and time-varying high-risk group membership (Lee & Lawson, 2016).
+
+*What it adds*: Allows localised risk patterns to vary over time within a structured spatio-temporal model.
+
+*Concerns*: Group allocation and temporal structure require explicit specification. This function does not estimate an unrestricted new adjacency graph at every time point; dynamic graph models are a separate construction.
+
+::: callout-warning
+## Implementation: Spatio-Temporal Group Allocations
+
+`CARBayesST::ST.CARlocalised()` uses MCMC for its latent structure. Consult the [package manual](https://cran.r-project.org/web/packages/CARBayesST/CARBayesST.pdf) for the model and its fixed spatial weights input.
+:::
 
 ## Bayesian Model Evaluation and Prior Sensitivity
 
+### Pointwise WAIC and Spatial Autocorrelation
+
+Predictive evaluation should match the intended task. Pointwise LOO assesses prediction of a held-out observation with the remaining observations, including its neighbours, are available. This can be appropriate for interpolation but over optimistic for prediction for spatial models.
+
+#### Recommended Alternative: Spatial Block & Leave-Neighbourhood-Out Cross-Validation
+
+As a general recommendation, consider spatial blocks or leave-neighbourhood-out validation when assessing transfer beyond observed neighbourhoods. For a held-out set $N(i)$, the target is $p(\mathbf y_{N(i)}\mid\mathbf y_{-N(i)})$. Choose blocks to reflect the intended use, and distinguish these scores from pointwise CPO/LOO. Boundary recovery requires separate assessment (Vehtari et al., 2017; Roberts et al., 2017).
+
+Model evaluation in the Bayesian spatial framework relies on predictive metrics that assess how well the fitted model anticipates held-out observations. R-INLA computes these natively via option `control.compute = list(dic = TRUE, waic = TRUE, cpo = TRUE)`.
+
+**CPO (Conditional Predictive Ordinate)**: The leave-one-out cross-validated predictive density $p(y_i \mid \mathbf{y}_{-i})$, computed without refitting via the Laplace approximation. Observations with unusually small CPO values are potential outliers or high-leverage points.
+
+**LCPO (Logarithmic CPO)**: The standard cross-validation metric for model comparison in R-INLA:
+
+$$
+\text{LCPO} = -\frac{1}{n}\sum_{i=1}^{n} \log(\text{CPO}_i)
+$$
+
+Lower LCPO indicates superior predictive accuracy. This is the negated mean of log-CPO values; do not confuse with LPML ($= \sum \log(\text{CPO}_i)$, where higher is better).
+
+**PIT (Probability Integral Transform)**: A predictive calibration diagnostic. For continuous outcomes, a correctly specified predictive CDF evaluated at the observation is uniformly distributed. Histogram shapes can suggest dispersion problems, but need interpretation with finite-sample variability and dependence in mind.
+
+::: {.callout-note appearance="simple"}
+## Technical Note: PIT for Count Outcomes
+
+For discrete outcomes, $F_i(y_i)$ is not continuously uniform. A randomized transform is $U_i=F_i(y_i^-)+V_i[F_i(y_i)-F_i(y_i^-)]$, with $V_i\sim\operatorname{Uniform}(0,1)$. Check the software's PIT convention and account for dependence among leave-one-out diagnostics before applying uniformity tests (Dunn & Smyth, 1996).
+:::
+
+**WAIC / DIC**: Compare models fitted to the same response and evaluation target. Interpret score differences alongside their uncertainty and practical relevance; fixed cutoffs such as $\Delta\mathrm{WAIC}>4$ or $\Delta\mathrm{DIC}>5$ are not universal evidence thresholds. WAIC and LOO also require care over the pointwise likelihood and which latent effects are integrated out (Vehtari, Gelman, & Gabry, 2017).
+
+**Residual Moran's** $I$: After fitting a spatial model, testing residuals for remaining spatial autocorrelation via `spdep::moran.test()` confirms that the spatial random effects have successfully absorbed the spatial dependence structure. Significant residual Moran's $I$ suggests model misspecification.
+
+::: {.callout-note appearance="simple"}
+## Operational Note: CPO Failure Rates and Numerical Stability
+
+Inspect `result$cpo$failure` before interpreting CPO-based scores, and investigate any positive flags rather than treating a fixed percentage as a universal pass/fail rule. Recompute questionable CPO/PIT values with `inla.cpo(result)` or explicit held-out refits, and verify extreme contributions to the log score. Integration changes may help, but a CPO failure alone neither certifies nor invalidates every other posterior quantity. See the [R-INLA FAQ](https://www.r-inla.org/faq).
+
+For spatial models with strong autocorrelation, standard leave-one-out CPO can be optimistic because neighbouring observations carry redundant information. Consider Leave-Group-Out Cross-Validation (LGOCV) via `inla.group.cv()` for more conservative assessment.
+:::
 
 ## Software Implementation and Workflow
+
+R-INLA is the primary inference engine for the models discussed in this document. Its core advantage is speed: by replacing Monte Carlo sampling with deterministic Laplace approximations over the latent Gaussian field, R-INLA fits models in seconds to minutes that would require hours of MCMC convergence in WinBUGS or JAGS (Rue, Martino, & Chopin, 2009). The `inlabru` package extends R-INLA with higher-level formula syntax, integrated mesh construction for SPDE models, and multi-likelihood specifications.
+
+**When R-INLA applies**: All models with continuous latent Gaussian structure—BYM, BYM2, Leroux, Proper CAR, geostatistical (SPDE), and spline models. Post-hoc Bayesian areal wombling (Lu & Carlin, 2005) is also feasible via R-INLA, since boundary detection occurs after fitting the latent field.
+
+::: {.callout-note appearance="simple"}
+## Operational Note: Prior and Posterior Predictive Checks
+
+Two important checks in Bayesian spatial analysis are:
+
+1.  **Prior Predictive Checks**: Simulate outcomes from the full prior model, including covariates and offsets. Assess plausible counts, risks, and spatial contrasts for the application; neither a fixed 10% cut-off nor a universal log-risk range establishes adequacy.
+
+2.  **Posterior Predictive Checks**: Draw latent states and hyperparameters from the posterior, then simulate replicated outcomes from the observation likelihood. `inla.posterior.sample(n, result)` supplies posterior states, not replicated observations by itself (and requires `config = TRUE`). Compare relevant features such as zeros, tails, and spatial contrasts (Gelman et al., 2020).
+:::
 
 # To End: Methodological Challenges and Advanced Perspectives
 
 ## Spatial Confounding and Model Selection
 
+Spatially structured covariates and random effects can compete to explain the same variation, changing coefficient estimates and uncertainty (Hodges & Reich, 2010). Restricted Spatial Regression (RSR) is one proposed response, projecting the random field onto the orthogonal complement of the covariate space (Hughes & Haran, 2013):
+
+$$
+\boldsymbol{\phi}_{\mathrm{RSR}}=P_X^\perp\boldsymbol{\phi},
+\qquad P_X^\perp=I-X(X^\top X)^{-1}X^\top,
+$$ assuming $X$ has full column rank. Be aware, this changes the model; it does not guarantee unbiased coefficients or genuine residual boundaries.
+
+RSR should not be a default correction. Khan and Calder (2022) demonstrate adverse coverage and sign-error behaviour in studied settings, while Donegan (2025) critiques the conceptual framing of spatial confounding. Specify the target association or causal estimand and distinguish boundaries in total risk from boundaries in residual effects before choosing restrictions.
+
 ## Prior Sensitivity and Robustness
+
+**Penalised Complexity (PC) priors** express shrinkage towards a stated base model (Simpson et al., 2017):
+
+1.  **Standard deviation**: $P(\sigma>U_\sigma)=\alpha_\sigma$ gives an exponential prior on $\sigma$ with rate $\lambda_\sigma=-\log(\alpha_\sigma)/U_\sigma$, shrinking towards no random effect.
+2.  **BYM2 mixing parameter**: $P(\phi<U_\phi)=\alpha_\phi$ calibrates the graph-specific PC prior, with base model $\phi=0$. This is not a generic PC-prior formula for every spatial correlation parameter.
+
+PC priors are an interpretable option, not an automatic guarantee of robustness. Gamma$(0.001,0.001)$ shape–rate priors on precision should not be labelled non-informative: the induced inverse-gamma variance prior has a heavy tail, and posterior sensitivity depends on the likelihood and scale. Document and assess the resulting prior predictions (see Gelman et al., 2020).
+
+::: {.callout-note appearance="simple"}
+## Operational Note: Sensitivity Sweep Protocol
+
+Refit across substantively plausible prior settings and compare effect sizes, uncertainty, predictive behaviour, and boundary decisions. Vary both scale and mixing priors where relevant. Overlapping marginal intervals alone do not establish robustness; report changes in the conclusions of interest (Gelman et al., 2020).
+:::
 
 ## Computational Complexity and Large Datasets
 
+### Iterative Pseudo-INLA for Adaptive Adjacency Graphs
+
+Lee and Mitchell (2013) alternate INLA inference conditional on $W^{(k)}$ with deterministic adjacency updates. Dean et al. (2019), apply this to binomial data: initialise with independent effects; retain an adjacent pair's edge when the marginal 95% intervals overlap; refit conditional on the updated graph; stop at a stable graph or a cycle. For cycles, they select a graph using residual spatial autocorrelation. They report fewer than five iterations in their applications, not a universal convergence rate. The authors further require an effect contrast exceeding their chosen mean-plus-one-standard-deviation threshold to label an edge a social frontier. The result is a selected graph and conditional posterior, not a joint posterior over graphs.
+
+Dong et al. (2020) extend locally adaptive modelling to multilevel logistic data using MCMC with Pólya–Gamma augmentation.
+
+For dense Gaussian-process covariance matrices, direct factorisation typically costs $\mathcal{O}(N^3)$. Sparse GMRF factorisation depends on graph structure, ordering, and fill-in; approximately $\mathcal{O}(N^{3/2})$ is a useful two-dimensional lattice benchmark, not a rate for every graph or complete INLA fit (Rue & Held, 2005; Bakka et al., 2018).
+
+## Synthesis & Comparative Recommendations
+
+| Methodology | Domain | Primary Mechanism | Boundary Target | Computational Considerations | Software |
+|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
+| **Curvilinear Wombling** | Continuous surface | Gradients ($\nu>1$); Matérn curvature ($\nu>2$) | Rapid directional change | Dense GP factorisation typically $\mathcal{O}(N^3)$ | nimblewomble |
+| **Global CAR / BYM2** | Areal graph | Posterior contrasts | Risk or residual differences; smoothing can attenuate jumps | Sparse graph factorisation; structure-dependent cost | R-INLA, Stan |
+| **Dissimilarity CAR** | Areal graph | Binary covariate thresholding (Lee–Mitchell) | Removed edges | Model- and sampler-dependent | CARBayes |
+| **Spatial DP / MARDP** | Areal graph | Shared atoms and posterior equality | Differences between latent effects | Specialised MCMC | Authors' implementation |
+| **Iterative Pseudo-INLA** | Areal graph | Deterministic graph updates and conditional fits | Selected graph breaks | Repeated sparse fits; no general linear-time guarantee | R-INLA with iterative updates |
+| **ABI-DAGAR Flow** | Areal graph | Covariate boundary rule and neural posterior approximation | Boundary probabilities under the fitted model | Training plus graph-dependent preprocessing and sampling | BayesFlow / authors' implementation |
+
+# Example Bayesian Workflow Plan (Betancourt and Gellman)
+
+ 1. Generative Architecture of Spatial Latent Gaussian Models (LGMs):
+      • Level 1 (Observation Likelihood): Conditional independence given the linear predictor 'η' and likelihood hyperparameters
+      'θ₁'.
+      • Level 2 (Structured Latent Gaussian Field): Gaussian Markov Random Field (GMRF) representation governed by a sparse
+      precision matrix 'Q(θ₂)' reflecting topological contiguity.
+      • Level 3 (Hyperparameter Hierarchy): Low-dimensional hyperparameter integration space for variance, correlation, and
+      spatial mixing parameters.
+  2. The Ten-Stage Conceptual Workflow:
+      • Stage 1 (Formulation): Distinguishing area-level continuous outcomes, bounded proportions, and overdispersed counts.
+      • Stage 2 (Penalized Complexity Priors): Eliciting tail probabilities from base models ('σ = 0', 'φ = 0').
+      • Stage 3 (Spatial Graph Topology): Graph validation, Queen contiguity matrices, and handling disconnected island
+      enclaves.
+      • Stage 4 (Prior Predictive Checks): Domain-bounded generative simulations prior to empirical confrontation.
+      • Stage 5 (Deterministic Laplace Inference): Approximating hyperparameter marginals 'p(θ|y)' and latent conditional
+      posteriors 'p(xᵢ|θ,y)'.
+      • Stage 6 (Spatial Cross-Validation): Evaluating predictive leave-one-out densities (CPO / LCPO) and Leave-Group-Out
+      Cross-Validation (LGOCV) under spatial autocorrelation.
+      • Stage 7 (Calibration & Model Criticism): Diagnosing dispersion via PIT uniformity and checking joint posterior
+      predictive replications.
+      • Stage 8 (Prior Sensitivity Sweeps): Hyperparameter sweeps across tight, moderate, and loose specifications.
+      • Stage 9 (Information Criteria & Parsimony): WAIC and DIC penalization by effective parameter complexity ('p_eff').
+
+  • Stage 10 (Posterior Synthesis & Uncertainty): Full marginal credibility interval reporting and variance decomposition
+  (spatial clustering vs. localized noise).
+
+  3. Methodological Caveats in Spatial Latent Modeling:
+      • Numerical Approximation Stability: Detection of CPO integration failures and escalation to full grid integration.
+      • Spatial Graph Invariance ('scale.model = TRUE'): Rescaling spatial precision to guarantee graph-topology invariance of PC
+      priors.
+      • Identifiability & Sum-to-Zero Constraints ('constr = TRUE'): Preventing collinearity between the global intercept and
+      spatial random effects.
+      • Spatial Confounding & Variance Absorption: Preventing smooth spatial random effects from masking substantive fixed-
+      effect exposure metrics.
+      • Modifiable Areal Unit Problem (MAUP): Multi-scale boundary buffering sensitivity.
+
 # References
 
-Based mainly on:
+Aiello, L., & Banerjee, S. (2026). Spatial disease mapping and disparity detection using generative AI: An amortized Bayesian learning framework. *arXiv preprint*, arXiv:2606.18146. <https://doi.org/10.48550/arXiv.2606.18146>
 
-Betancourt, M. Hierarchical Modeling
+Bakka, H., Rue, H., Fuglstad, G.-A., Riebler, A., Bolin, D., Illian, J., Krainski, E., Simpson, D., & Lindgren, F. (2018). Spatial modeling with R-INLA: A review. *WIREs Computational Statistics*, 10(6), e1443. <https://doi.org/10.1002/wics.1443>
 
-Duncan, E. W., S. M. Cramb, P. D. Baade, K. L. Mengersen, T. Saunders, and J. F. Aitken. (2024). Developing a Cancer Atlas using Bayesian Methods: A Practical Guide for Application and Interpretation, 2nd ed. Brisbane: Queensland University of Technology (QUT) and Cancer Council Queensland.
+Banerjee, S., & Gelfand, A. E. (2006). Bayesian wombling: Curvilinear gradient assessment under spatial process models. *Journal of the American Statistical Association*, 101(476), 1487–1501. <https://doi.org/10.1198/016214506000000041>
 
-Liang S, Banerjee S, Carlin BP. Bayesian wombling for spatial point processes. Biometrics. (2009) Dec;65(4):1243-53. doi: 10.1111/j.1541-0420.2009.01203.x.
+Banerjee, S., Carlin, B. P., & Gelfand, A. E. (2014). *Hierarchical Modeling and Analysis for Spatial Data* (2nd ed.). Chapman and Hall/CRC. <https://doi.org/10.1201/b17115>
 
-McElreath, R. (2020). Statistical Rethinking: A Bayesian Course with Examples in R and STAN (2nd ed.). Chapman and Hall/CRC. https://doi.org/10.1201/9780429029608
+Besag, J. (1974). Spatial interaction and the statistical analysis of lattice systems. *Journal of the Royal Statistical Society: Series B*, 36(2), 192–236. <https://doi.org/10.1111/j.2517-6161.1974.tb00999.x>
 
-Moraga, Paula. (2019). Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny. Chapman & Hall/CRC Biostatistics Series.
+Besag, J., York, J., & Mollié, A. (1991). Bayesian image restoration, with two applications in spatial statistics. *Annals of the Institute of Statistical Mathematics*, 43(1), 1–20. <https://doi.org/10.1007/BF00116466>
 
-Riebler, A., Sørbye, S. H., Simpson, D., & Rue, H. (2016). An intuitive Bayesian spatial model for disease mapping that accounts for scaling (arXiv Preprint No. 1601.01180). arXiv. https://doi.org/10.48550/arXiv.1601.01180
+Betancourt, M. (n.d.). *Hierarchical Modeling*. <https://betanalpha.github.io/assets/case_studies/hierarchical_modeling.html>
 
+Clements, A. C. A., Barnett, A. G., Cheng, Z. W., Snow, R. W., & Zhou, H. N. (2009). Space–time variation of malaria incidence in Yunnan province, China. *Malaria Journal*, 8, 180. <https://doi.org/10.1186/1475-2875-8-180>
+
+Congdon, P. (2017). Representing spatial dependence and spatial discontinuity in ecological epidemiology: A scale mixture approach. *Stochastic Environmental Research and Risk Assessment*, 31(2), 291–304. <https://doi.org/10.1007/s00477-016-1292-9>
+
+Cramb, S. M., Duncan, E. W., Baade, P. D., & Mengersen, K. L. (2017). *Investigation of Bayesian Spatial Models*. Cancer Council Queensland and Queensland University of Technology. <https://cancerqld.blob.core.windows.net/content/docs/Investigation-of-Bayesian-spatial-models.pdf>
+
+Cramb, S. M., Duncan, E. W., Baade, P. D., & Mengersen, K. L. (2020). A comparison of Bayesian spatial models for cancer incidence at a small area level: Theory and performance. In *Case Studies in Applied Bayesian Data Science* (pp. 245–274). Springer. <https://doi.org/10.1007/978-3-030-42553-1_10>
+
+Dale, M. R. T., & Fortin, M.-J. (2014). *Spatial Analysis: A Guide for Ecologists* (2nd ed.). Cambridge University Press. <https://doi.org/10.1017/CBO9780511978913>
+
+Datta, A., Banerjee, S., Finley, A. O., & Gelfand, A. E. (2016). Hierarchical nearest-neighbor Gaussian process models for large geostatistical datasets. *Journal of the American Statistical Association*, 111(514), 800–812. <https://doi.org/10.1080/01621459.2015.1044091>
+
+Dean, N., Dong, G., Piekut, A., & Pryce, G. (2019). Frontiers in residential segregation: Understanding neighbourhood boundaries and their impacts. *Tijdschrift voor Economische en Sociale Geografie*, 110(3), 271–288. <https://doi.org/10.1111/tesg.12316> (including the supplementary “Social Frontier Estimation” section, file `tesg12316-sup-0001-suppinfo1.docx`).
+
+Denison, D. G. T., & Holmes, C. C. (2001). Bayesian partitioning for estimating disease risk. *Biometrics*, 57(1), 143–149. <https://doi.org/10.1111/j.0006-341X.2001.00143.x>
+
+Donegan, C. (2025). Plausible reasoning and spatial-statistical theory: A critique of recent writings on “spatial confounding”. *Geographical Analysis*, 57(1), 152–172. <https://doi.org/10.1111/gean.12408>
+
+Dong, G., Ma, J., Lee, D., Chen, M., Pryce, G., & Chen, Y. (2020). Developing a locally adaptive spatial multilevel logistic model to analyze ecological effects on health using individual census records. *Annals of the American Association of Geographers*, 110(3), 739–757. <https://doi.org/10.1080/24694452.2019.1644990>
+
+Duncan, E. W., Cramb, S. M., Baade, P. D., Mengersen, K. L., Saunders, T., & Aitken, J. F. (2024). *Developing a Cancer Atlas using Bayesian Methods: A Practical Guide for Application and Interpretation* (2nd ed.). Brisbane: Queensland University of Technology (QUT) and Cancer Council Queensland. <https://atlas.cancer.org.au/ebook/ebook2/Index.html>
+
+Duncan, E. W., White, N. M., & Mengersen, K. (2017). Spatial smoothing in Bayesian models: A comparison of weights matrix specifications and their impact on inference. *International Journal of Health Geographics*, 16, 47. <https://doi.org/10.1186/s12942-017-0120-x>
+
+Dunn, P. K., & Smyth, G. K. (1996). Randomized quantile residuals. *Journal of Computational and Graphical Statistics*, 5(3), 236–244. <https://doi.org/10.1080/10618600.1996.10474708>
+
+Fink, D. (1997). *A Compendium of Conjugate Priors*. Technical report, Cornell University. <https://www.johndcook.com/CompendiumOfConjugatePriors.pdf>
+
+Fitzpatrick, M. C., Preisser, E. L., Porter, A., Elkinton, J., Waller, L. A., Carlin, B. P., & Ellison, A. M. (2010). Ecological boundary detection using Bayesian areal wombling. *Ecology*, 91(12), 3448–3455. <https://doi.org/10.1890/10-0807.1>
+
+Gao, L., Banerjee, S., & Ritz, B. (2023). Spatial difference boundary detection for multiple outcomes using Bayesian disease mapping. *Biostatistics*, 24(4), 922–944. <https://doi.org/10.1093/biostatistics/kxac013>
+
+Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., & Rubin, D. B. (2013). *Bayesian Data Analysis* (3rd ed.). Chapman and Hall/CRC. <https://doi.org/10.1201/b16018>
+
+Gelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., Kennedy, L., Gabry, J., Bürkner, P.-C., & Modrák, M. (2020). Bayesian workflow. *arXiv Preprint*, arXiv:2011.01808. <https://doi.org/10.48550/arXiv.2011.01808>
+
+Gianella, M., Beraha, M., & Guglielmi, A. (2026). Bayesian nonparametric boundary detection for multiple areal data. *arXiv preprint*, arXiv:2312.13992, version 4 (first posted 2023). <https://arxiv.org/abs/2312.13992v4>
+
+Goicoa, T., Ugarte, M. D., Etxeberria, J., & Militino, A. F. (2012). Comparing CAR and P-spline models in spatial disease mapping. *Environmental and Ecological Statistics*, 19(4), 573–599. <https://doi.org/10.1007/s10651-012-0201-8>
+
+Green, P. J., & Richardson, S. (2002). Hidden Markov models and disease mapping. *Journal of the American Statistical Association*, 97(460), 1055–1070. <https://doi.org/10.1198/016214502388618870>
+
+Griffith, D. A. (1992). What is spatial autocorrelation? Reflections on the past 25 years of spatial statistics. *L’Espace géographique*, 21(3), 265–280. <https://doi.org/10.3406/spgeo.1992.3091>
+
+Halder, A., & Banerjee, S. (2025). nimblewomble: An R package for Bayesian wombling with nimble. *arXiv preprint*, arXiv:2504.07673. <https://doi.org/10.48550/arXiv.2504.07673>
+
+Halder, A., Banerjee, S., & Dey, D. K. (2024). Bayesian modeling with spatial curvature processes. *Journal of the American Statistical Association*, 119(546), 1155–1167. <https://doi.org/10.1080/01621459.2023.2177166>
+
+Hodges, J. S., & Reich, B. J. (2010). Adding spatially-correlated errors can mess up the fixed effect you love. *The American Statistician*, 64(4), 325–334. <https://doi.org/10.1198/tast.2010.10052>
+
+Hughes, J., & Haran, M. (2013). Dimension reduction and alleviation of confounding for spatial generalized linear mixed models. *Journal of the Royal Statistical Society: Series B*, 75(1), 139–159. <https://doi.org/10.1111/j.1467-9868.2012.01041.x>
+
+Jacquez, G. M. (2010). The emerging role and benefits of boundary analysis in spatio-temporal epidemiology and public health. *Spatial and Spatio-temporal Epidemiology*, 1(4), 197–200. <https://doi.org/10.1016/j.sste.2010.09.001>
+
+Jeffreys, H. (1961). *Theory of Probability* (3rd ed.). Clarendon Press. <https://search.worldcat.org/title/Theory-of-probability/oclc/13471303>
+
+Khan, K., & Calder, C. A. (2022). Restricted spatial regression methods: Implications for inference. *Journal of the American Statistical Association*, 117(537), 482–494. <https://doi.org/10.1080/01621459.2020.1788949>
+
+Knorr-Held, L., & Raßer, G. (2000). Bayesian detection of clusters and discontinuities in disease maps. *Biometrics*, 56(1), 13–21. <https://doi.org/10.1111/j.0006-341X.2000.00013.x>
+
+Lang, S., & Brezger, A. (2004). Bayesian P-splines. *Journal of Computational and Graphical Statistics*, 13(1), 183–212. <https://doi.org/10.1198/1061860043010>
+
+Lawson, A. B., & Clark, A. (2002). Spatial mixture relative risk models applied to disease mapping. *Statistics in Medicine*, 21(3), 359–370. <https://doi.org/10.1002/sim.1022>
+
+Lee, D., & Lawson, A. (2016). Quantifying the spatial inequality and temporal trends in maternal smoking rates in Glasgow. *The Annals of Applied Statistics*, 10(3), 1427–1446. <https://doi.org/10.1214/16-AOAS941>
+
+Lee, D., & Mitchell, R. (2012). Boundary detection in disease mapping studies. *Biostatistics*, 13(3), 415–426. <https://doi.org/10.1093/biostatistics/kxr036>
+
+Lee, D., & Mitchell, R. (2013). Locally adaptive spatial smoothing using conditional auto-regressive models. *Journal of the Royal Statistical Society: Series C*, 62(4), 593–608. <https://doi.org/10.1111/rssc.12009>
+
+Lee, D., & Sarran, C. (2015). Controlling for unmeasured confounding and spatial misalignment in long-term air pollution and health studies. *Environmetrics*, 26(7), 477–487. <https://doi.org/10.1002/env.2348>
+
+Lee, D., Rushworth, A., & Napier, G. (2018). Spatio-temporal areal unit modeling in R with conditionally autoregressive priors using the CARBayesST package. *Journal of Statistical Software*, 84(9), 1–39. <https://doi.org/10.18637/jss.v084.i09>
+
+Leroux, B. G., Lei, X., & Breslow, N. (2000). Estimation of disease rates in small areas: A new mixed model for spatial dependence. In M. E. Halloran & D. Berry (Eds.), *Statistical Models in Epidemiology, the Environment, and Clinical Trials* (pp. 179–191). Springer. <https://doi.org/10.1007/978-1-4612-1284-3_4>
+
+Liang, S., Banerjee, S., & Carlin, B. P. (2009). Bayesian wombling for spatial point processes. *Biometrics*, 65(4), 1243–1253. <https://doi.org/10.1111/j.1541-0420.2009.01203.x>
+
+Lindgren, F., Rue, H., & Lindström, J. (2011). An explicit link between Gaussian fields and Gaussian Markov random fields: The stochastic partial differential equation approach. *Journal of the Royal Statistical Society: Series B*, 73(4), 423–498. <https://doi.org/10.1111/j.1467-9868.2011.00777.x>
+
+Logan, J. R., Spielman, S., Xu, H., & Klein, P. N. (2011). Identifying and bounding ethnic neighborhoods. *Urban Geography*, 32(3), 334–359. <https://doi.org/10.2747/0272-3638.32.3.334>
+
+Lu, H., & Carlin, B. P. (2005). Bayesian areal wombling for geographical boundary analysis. *Geographical Analysis*, 37(3), 265–285. <https://doi.org/10.1111/j.1538-4632.2005.00624.x>
+
+Lu, H., Reilly, C. S., Banerjee, S., & Carlin, B. P. (2007). Bayesian areal wombling via adjacency modeling. *Environmental and Ecological Statistics*, 14, 433–452. <https://doi.org/10.1007/s10651-007-0029-9>
+
+Ma, H., & Carlin, B. P. (2007). Bayesian multivariate areal wombling for multiple disease boundary analysis. *Bayesian Analysis*, 2(2), 281–302. <https://doi.org/10.1214/07-BA211>
+
+McElreath, R. (2020). *Statistical Rethinking: A Bayesian Course with Examples in R and STAN* (2nd ed.). Chapman and Hall/CRC. <https://doi.org/10.1201/9780429029608>
+
+Moraga, P. (2018). Small area disease risk estimation and visualization using R. *The R Journal*, 10(1), 495–506. <https://doi.org/10.32614/RJ-2018-036>
+
+Moraga, P. (2019). *Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny*. Chapman & Hall/CRC Biostatistics Series. <https://doi.org/10.1201/9780429341823>
+
+Morris, M., Wheeler-Martin, K., Simpson, D., Mooney, S. J., Gelman, A., & DiMaggio, C. (2019). Bayesian hierarchical spatial models: Implementing the Besag York Mollié model in Stan. *Spatial and Spatio-temporal Epidemiology*, 31, 100301. <https://doi.org/10.1016/j.sste.2019.100301>
+
+Nathoo, F. S., & Ghosh, P. (2013). Skew-elliptical spatial random effect modeling for areal data with application to mapping health utilization rates. *Statistics in Medicine*, 32(2), 290–306. <https://doi.org/10.1002/sim.5504>
+
+Perperoglou, A., & Eilers, P. H. C. (2010). Penalized regression with individual deviance effects. *Computational Statistics*, 25(2), 341–361. <https://doi.org/10.1007/s00180-009-0180-x>
+
+Qu, K., Bradley, J. R., & Niu, X. (2021). Boundary detection using a Bayesian hierarchical model for multiscale spatial data. *Technometrics*, 63(1), 64–76. <https://doi.org/10.1080/00401706.2019.1677268>
+
+Riebler, A., Sørbye, S. H., Simpson, D., & Rue, H. (2016). An intuitive Bayesian spatial model for disease mapping that accounts for scaling. *Statistical Methods in Medical Research*, 25(4), 1145–1165. <https://doi.org/10.1177/0962280216660421>
+
+Roberts, D. R., et al. (2017). Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure. *Ecography*, 40(8), 913–929. <https://doi.org/10.1111/ecog.02881>
+
+Rue, H., & Held, L. (2005). *Gaussian Markov Random Fields: Theory and Applications*. Chapman and Hall/CRC. <https://doi.org/10.1201/9780203492024>
+
+Rue, H., Martino, S., & Chopin, N. (2009). Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations. *Journal of the Royal Statistical Society: Series B*, 71(2), 319–392. <https://doi.org/10.1111/j.1467-9868.2008.00700.x>
+
+Simpson, D., Rue, H., Riebler, A., Martins, T. G., & Sørbye, S. H. (2017). Penalising model component complexity: A principled, practical approach to constructing priors. *Statistical Science*, 32(1), 1–28. <https://doi.org/10.1214/16-STS576>
+
+Spielman, S. E., & Logan, J. R. (2013). Using high-resolution population data to identify neighborhoods and establish their boundaries. *Annals of the Association of American Geographers*, 103(1), 67–84. <https://doi.org/10.1080/00045608.2012.685049>
+
+Veenman, M., Stefan, A. M., & Haaf, J. M. (2024). Bayesian hierarchical modeling: An introduction and reassessment. *Behavior Research Methods*, 56(5), 4600–4631. <https://doi.org/10.3758/s13428-023-02204-3>
+
+Vehtari, A., Gelman, A., & Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. *Statistics and Computing*, 27, 1413–1432. <https://doi.org/10.1007/s11222-016-9696-4>
+
+Wagenmakers, E.-J., et al. (2018). Bayesian inference for psychology. Part I: Theoretical advantages and practical ramifications. *Psychonomic Bulletin & Review*, 25(1), 35–57. <https://doi.org/10.3758/s13423-017-1343-3>
+
+Womble, W. H. (1951). Differential systematics. *Science*, 114(2961), 315–322. <https://doi.org/10.1126/science.114.2961.315>
 
 ::: {.callout-note collapse="true"}
 # Reproducibility
@@ -651,5 +1311,4 @@ Riebler, A., Sørbye, S. H., Simpson, D., & Rue, H. (2016). An intuitive Bayesia
 		    xfun::session_info()
 
 ```
-
 :::
