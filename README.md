@@ -1,1 +1,1 @@
-A bunch of code that reflects my learning intents into the world of Bayesian spatial modelling. See main document Spatial_bayesian_models [html](Spatial_bayesian_models.html) (prefered) or [pdf](Spatial_bayesian_models.pdf).
+A bunch of code that reflects my learning intents into the world of Bayesian spatial modelling. See main document Spatial_bayesian_models [html](Spatial_bayesian_models.html) (preferred) or [pdf](Spatial_bayesian_models.pdf).
